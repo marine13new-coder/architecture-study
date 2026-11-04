@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCHI-GENEALOGY | 근현대 건축가 계보 & 인터랙티브 아카이브</title>
+  
+  <!-- Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+KR:wght@400;600;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css?v=20261104_5">
+
+  <!-- Core Libraries (로컬 오프라인 라이브러리) -->
+  <script src="js/d3.v7.min.js"></script>
+  <script src="js/lucide.min.js"></script>
+</head>
+<body>
+
+  <!-- ==========================================
+       APP HEADER
+       ========================================== -->
+  <header class="app-header">
+    <div class="brand-section">
+      <span class="brand-badge">ARCHI-STUDY</span>
+      <h1 class="brand-title">
+        건축가 계보학
+        <span class="brand-sub">근대 4대 거장부터 현대까지의 사제·영향 계보</span>
+      </h1>
+    </div>
+
+    <!-- View Switcher Tabs -->
+    <nav class="view-tabs">
+      <button class="tab-btn active" data-view="timeline" id="tab-btn-timeline" title="시대별 연대기 타임라인">
+        <i data-lucide="git-commit"></i>
+        <span>시간 타임라인</span>
+      </button>
+      <button class="tab-btn" data-view="graph" id="tab-btn-graph" title="인터랙티브 네트워크 계보 그래프">
+        <i data-lucide="network"></i>
+        <span>계보 네트워크</span>
+      </button>
+      <button class="tab-btn" data-view="cards" id="tab-btn-cards" title="건축가 아카이브 목록">
+        <i data-lucide="layout-grid"></i>
+        <span>건축가 도감</span>
+      </button>
+      <button class="tab-btn" data-view="gallery" id="tab-btn-gallery" title="도면 & 명작 갤러리">
+        <i data-lucide="image"></i>
+        <span>도면 & 명작 갤러리</span>
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button class="btn btn-primary" id="btn-open-add-modal" title="새로운 건축가 추가">
+        <i data-lucide="plus"></i>
+        <span>건축가 추가</span>
+      </button>
+      <button class="btn" id="btn-open-backup-modal" title="데이터 백업 및 불러오기">
+        <i data-lucide="hard-drive"></i>
+        <span>데이터 관리</span>
+      </button>
+      <button class="btn-icon" id="btn-toggle-theme" title="다크/라이트 테마 전환">
+        <i data-lucide="sun-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       SUB-BAR (ERA FILTER & SEARCH)
+       ========================================== -->
+  <div class="control-subbar">
+    <div class="era-filters" id="era-filter-chips">
+      <!-- JavaScript로 시대별 칩 동적 렌더링 -->
+    </div>
+
+    <div class="search-box">
+      <i data-lucide="search"></i>
+      <input type="text" id="search-input" placeholder="건축가, 사조, 대표작, 키워드 검색...">
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MAIN VIEW CONTAINER
+       ========================================== -->
+  <main class="main-wrapper">
+    <!-- VIEW 1: 시간순 타임라인 (연표 차트 / 카드) -->
+    <section class="view-container active" id="view-timeline">
+      <!-- JavaScript로 타임라인 연표 및 카드 동적 렌더링 -->
+    </section>
+
+    <!-- VIEW 2: 계보 네트워크 그래프 (D3) -->
+    <section class="view-container" id="view-graph">
+      <div id="graph-canvas-container" style="width: 100%; height: 100%;"></div>
+
+      <!-- Floating Zoom Controls -->
+      <div class="graph-floating-controls">
+        <button class="btn-icon" id="btn-zoom-in" title="확대">
+          <i data-lucide="zoom-in"></i>
+        </button>
+        <button class="btn-icon" id="btn-zoom-out" title="축소">
+          <i data-lucide="zoom-out"></i>
+        </button>
+        <button class="btn-icon" id="btn-zoom-reset" title="화면 맞춤 / 원래대로">
+          <i data-lucide="maximize"></i>
+        </button>
+      </div>
+
+      <!-- Graph Legend -->
+      <div class="graph-legend">
+        <div class="legend-title">
+          <i data-lucide="info"></i>
+          <span>계보 연결선 안내</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-line" style="background: #58a6ff;"></span>
+          <span>직속 사제 / 아틀리에 실무</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-line" style="background: #8b949e; border-top: 1px dashed #8b949e;"></span>
+          <span>결정적 사상적 영향 / 계승</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-line" style="background: #10b981; border-top: 1px dashed #10b981;"></span>
+          <span>동업 / 파트너십 협업</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-line" style="background: #ef4444; border-top: 2px dashed #ef4444;"></span>
+          <span>비판적 대립 / 라이벌 관계</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 0.72rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 6px;">
+          * 점선 링 표시: 근대 4대 거장 라인<br>
+          * 노드를 클릭하면 연결 계보 하이라이트 & 상세 정보 표시
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: 건축가 도감 (아카이브 그리드) -->
+    <section class="view-container" id="view-cards">
+      <!-- JavaScript로 그리드 카드 동적 렌더링 -->
+    </section>
+
+    <!-- VIEW 4: 도면 & 명작 갤러리 (블루프린트 & 사진) -->
+    <section class="view-container" id="view-gallery">
+      <!-- JavaScript로 도면 및 명작 사진 갤러리 동적 렌더링 -->
+    </section>
+  </main>
+
+  <!-- ==========================================
+       SIDE OVER DETAIL INSPECTOR (DRAWER)
+       ========================================== -->
+  <aside class="detail-drawer" id="detail-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title-area">
+        <span class="drawer-era-badge" id="drawer-era-badge">시대</span>
+        <h2 class="drawer-name-ko" id="drawer-name-ko">건축가 이름</h2>
+        <div class="drawer-name-en" id="drawer-name-en">Architect Name</div>
+      </div>
+      <button class="btn-icon" id="btn-close-drawer" title="닫기">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- 미디어 뷰어: 인물 사진 / 대표 건축물 / 도면 평면도 -->
+      <div class="drawer-media-box" id="drawer-media-box">
+        <div class="drawer-media-tabs">
+          <button class="drawer-media-tab active" data-type="portrait" id="tab-media-portrait">👤 인물 사진</button>
+          <button class="drawer-media-tab" data-type="building" id="tab-media-building">🏛️ 대표 건축물</button>
+          <button class="drawer-media-tab" data-type="blueprint" id="tab-media-blueprint">📐 도면/평면도</button>
+        </div>
+        <div class="drawer-media-display">
+          <img id="drawer-media-img" src="" alt="건축 미디어" loading="lazy">
+          <div class="drawer-media-caption">
+            <span id="drawer-media-caption-title">미디어 제목</span>
+            <span id="drawer-media-caption-tag" style="color: var(--text-accent);"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 사조 & 명언 -->
+      <div class="drawer-section">
+        <div class="architect-movement" id="drawer-movement" style="font-size: 0.95rem; margin-bottom: 8px;"></div>
+        <div class="drawer-quote-box" id="drawer-quote-box"></div>
+      </div>
+
+      <!-- 역사적 비화 & 학술 해설 박스 -->
+      <div class="drawer-anecdote-box" id="drawer-anecdote-box">
+        <div class="anecdote-header">
+          <i data-lucide="sparkles"></i>
+          <span>역사적 비화 & 계보적 의의</span>
+        </div>
+        <p id="drawer-anecdote-text"></p>
+      </div>
+
+      <!-- 생애 & 건축 철학 -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">
+          <i data-lucide="book-open"></i>
+          <span>건축 철학과 역사적 의의</span>
+        </div>
+        <p class="drawer-desc" id="drawer-desc"></p>
+      </div>
+
+      <!-- 대표작 -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">
+          <i data-lucide="landmark"></i>
+          <span>대표 건축물</span>
+        </div>
+        <div class="architect-masterpiece" id="drawer-masterpiece" style="font-size: 0.88rem; padding: 10px 14px;"></div>
+      </div>
+
+      <!-- 주요 대표작 목록 -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">
+          <i data-lucide="layers"></i>
+          <span>주요 대표작 목록 & 위치</span>
+        </div>
+        <div id="drawer-keyworks-list" class="drawer-keyworks-list"></div>
+      </div>
+
+      <!-- 영향의 고리: 스승 / 사사 -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">
+          <i data-lucide="arrow-up-right"></i>
+          <span>스승 & 사상적 원천 (Influenced By)</span>
+        </div>
+        <div class="relation-chips" id="drawer-teachers-chips">
+          <!-- 스승 칩 -->
+        </div>
+      </div>
+
+      <!-- 영향의 고리: 제자 / 계승 -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">
+          <i data-lucide="arrow-down-right"></i>
+          <span>제자 & 영향을 받은 후대 (Influenced)</span>
+        </div>
+        <div class="relation-chips" id="drawer-disciples-chips">
+          <!-- 제자 칩 -->
+        </div>
+      </div>
+
+      <!-- 태그 -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">
+          <i data-lucide="hash"></i>
+          <span>키워드 & 태그</span>
+        </div>
+        <div class="card-bottom-tags" id="drawer-tags"></div>
+      </div>
+
+      <!-- 나의 건축 공부 노트 (Study Notes) -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">
+          <i data-lucide="edit-3"></i>
+          <span>나의 공부 노트 (직접 기록하기)</span>
+        </div>
+        <div class="notes-container">
+          <textarea id="study-notes-text" class="notes-textarea" placeholder="책을 읽거나 공부하며 알게 된 건축적 특징, 공간 감상, 시험 요점 등을 자유롭게 메모하세요. (자동 보존)"></textarea>
+          <div class="notes-footer">
+            <span class="notes-status" id="notes-save-status"></span>
+            <button class="btn btn-primary" id="btn-save-notes" style="padding: 4px 12px; font-size: 0.8rem;">
+              <i data-lucide="check"></i>
+              <span>메모 저장</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <button class="btn" id="btn-locate-graph">
+        <i data-lucide="compass"></i>
+        <span>네트워크 그래프에서 위치 찾기</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==========================================
+       MODAL 1: ADD ARCHITECT
+       ========================================== -->
+  <div class="modal-overlay" id="modal-add-architect">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">새 건축가 등록하기</h3>
+        <button class="btn-icon" id="btn-close-add-modal"><i data-lucide="x"></i></button>
+      </div>
+      <form id="form-add-architect">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">한글 이름 *</label>
+              <input type="text" name="nameKo" class="form-control" placeholder="예: 피터 줌터" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">영문 이름</label>
+              <input type="text" name="nameEn" class="form-control" placeholder="예: Peter Zumthor">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">출생 연도 *</label>
+              <input type="number" name="birth" class="form-control" placeholder="예: 1943" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">사망 연도 (생존 시 비워둠)</label>
+              <input type="number" name="death" class="form-control" placeholder="예: 2020">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">국적</label>
+              <input type="text" name="country" class="form-control" placeholder="예: 스위스">
+            </div>
+            <div class="form-group">
+              <label class="form-label">해당 시대 구분 *</label>
+              <select name="eraId" class="form-control" required>
+                <option value="era-pioneers">태동기 & 근대 선구자 (~1910s)</option>
+                <option value="era-masters">근대 4대 거장 & 아방가르드 (1910s~1940s)</option>
+                <option value="era-postwar">전후 모더니즘 & 브루탈리즘 (1940s~1970s)</option>
+                <option value="era-postmodern">포스트모더니즘 & 해체주의 (1970s~1990s)</option>
+                <option value="era-contemporary" selected>하이테크 & 현대 동시대 (1990s~현재)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">주요 사조 / 양식</label>
+            <input type="text" name="movement" class="form-control" placeholder="예: 현상학적 건축 / 침묵의 미학">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">대표 명언 / 한 줄 슬로건</label>
+            <input type="text" name="quote" class="form-control" placeholder="예: 건축은 그 자체의 침묵을 유지해야 한다.">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">대표 건축물</label>
+            <input type="text" name="masterpiece" class="form-control" placeholder="예: 발스 온천 (Therme Vals), 클라우스 필드 채플">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">건축 철학 및 설명</label>
+            <textarea name="desc" class="form-control" rows="3" placeholder="건축가의 주요 활동과 철학을 입력하세요."></textarea>
+          </div>
+
+          <!-- 스승 관계 엣지 연결 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">스승 / 영향을 받은 건축가</label>
+              <select name="mentorId" id="input-mentor-id" class="form-control">
+                <!-- JavaScript 동적 채움 -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">사제/영향 관계 설명</label>
+              <input type="text" name="mentorLabel" class="form-control" placeholder="예: 물성과 침묵의 공간 미학 사사">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">태그 (쉼표로 구분)</label>
+            <input type="text" name="tags" class="form-control" placeholder="프리츠커, 온천, 현상학">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="check"></i>
+            <span>등록하기</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 2: BACKUP & IMPORT
+       ========================================== -->
+  <div class="modal-overlay" id="modal-backup">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">데이터 백업 및 불러오기</h3>
+        <button class="btn-icon" id="btn-close-backup-modal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+          공부하면서 추가한 새로운 건축가 정보와 작성하신 학습 메모는 브라우저 저장소에 안전하게 보관됩니다. 다른 기기로 옮기거나 영구 보관하려면 아래 버튼을 통해 JSON 파일로 백업하세요.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+          <button class="btn btn-primary" id="btn-export-json" style="justify-content: center; padding: 12px;">
+            <i data-lucide="download"></i>
+            <span>데이터 전체 백업 다운로드 (.json)</span>
+          </button>
+
+          <label class="btn" style="justify-content: center; padding: 12px; cursor: pointer;">
+            <i data-lucide="upload"></i>
+            <span>백업 파일 복원 / 가져오기</span>
+            <input type="file" id="input-import-json" accept=".json" style="display: none;">
+          </label>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #ef4444; margin-bottom: 6px;">데이터 초기화</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">
+            모든 학습 메모와 사용자 추가 건축가를 삭제하고 초기 기본 건축가 목록으로 복원합니다.
+          </p>
+          <button class="btn" id="btn-reset-data" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4);">
+            <i data-lucide="refresh-cw"></i>
+            <span>기본 데이터로 초기화</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Scripts (의존성 순서대로 명확히 로드) -->
+  <script src="js/data.js?v=20261104_5"></script>
+  <script src="js/graph.js?v=20261104_5"></script>
+  <script src="js/timeline.js?v=20261104_5"></script>
+  <script src="js/cards.js?v=20261104_5"></script>
+  <script src="js/gallery.js?v=20261104_5"></script>
+  <script src="js/app.js?v=20261104_5"></script>
+</body>
+</html>
