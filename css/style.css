@@ -558,8 +558,8 @@ body.light-theme {
 /* Lifespan Chart Container */
 .lifespan-chart-wrapper {
   position: relative;
-  min-width: 3400px;
-  padding: 40px 60px 80px 60px;
+  min-width: 3800px;
+  padding: 40px 0 80px 0;
   cursor: grab;
 }
 
@@ -567,15 +567,39 @@ body.light-theme {
   cursor: grabbing;
 }
 
-/* Era Background Bands */
+/* 1. Background Decade Grid Lines */
+.timeline-grid-lines {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.grid-vertical-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.grid-vertical-line.major {
+  background: rgba(255, 255, 255, 0.08);
+  border-left: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+/* 2. Era Background Bands */
 .era-background-bands {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 60px;
-  right: 60px;
+  left: 0;
+  right: 0;
   pointer-events: none;
-  display: flex;
+  z-index: 6;
 }
 
 .era-band {
@@ -599,11 +623,9 @@ body.light-theme {
   opacity: 0.6;
 }
 
-/* Central Timeline Axis (The Line that runs through) */
+/* 3. Central Timeline Axis Line (The Line that runs through) */
 .central-axis-line {
   position: absolute;
-  left: 60px;
-  right: 60px;
   height: 4px;
   background: linear-gradient(90deg, #f59e0b, #3b82f6, #10b981, #ef4444, #8b5cf6);
   border-radius: 2px;
@@ -628,11 +650,11 @@ body.light-theme {
   white-space: nowrap;
 }
 
-/* Year Ticks on the Axis */
+/* 4. Year Ticks on the Axis */
 .year-ticks-container {
   position: absolute;
-  left: 60px;
-  right: 60px;
+  left: 0;
+  right: 0;
   z-index: 21;
 }
 
@@ -664,7 +686,7 @@ body.light-theme {
   margin-top: 4px;
 }
 
-/* Vertical Probe Line (Hover / Click inspector line) */
+/* 5. Vertical Probe Line (Hover / Click inspector line) */
 .timeline-probe-line {
   position: absolute;
   top: 0;
@@ -693,7 +715,7 @@ body.light-theme {
   z-index: 31;
 }
 
-/* Lifespan Bars Layer */
+/* 6. Lifespan Bars Layer */
 .lifespan-bars-layer {
   position: relative;
   z-index: 25;
@@ -701,114 +723,171 @@ body.light-theme {
 
 .architect-bar-group {
   position: absolute;
-  cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease, z-index 0.2s;
+  height: 28px;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease, z-index 0.2s;
 }
 
 .architect-bar-group:hover {
-  z-index: 40 !important;
-  transform: scaleY(1.08);
+  z-index: 50 !important;
+  transform: scaleY(1.06);
 }
 
-/* Lifespan Bar Pill */
-.lifespan-bar {
-  height: 24px;
-  border-radius: 12px;
-  background: rgba(33, 38, 45, 0.9);
+/* The Continuous Lifespan Track (Birth to Death) */
+.lifespan-track {
+  width: 100%;
+  height: 26px;
+  border-radius: 13px;
+  background: rgba(22, 27, 34, 0.94);
   border: 1.5px solid var(--border-color);
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 0 10px;
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   transition: all 0.2s ease;
+  overflow: hidden;
 }
 
-.architect-bar-group:hover .lifespan-bar {
-  box-shadow: var(--shadow-md);
+.architect-bar-group:hover .lifespan-track {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   filter: brightness(1.15);
 }
 
-/* Active Working Years Section inside Lifespan Bar */
-.active-era-fill {
+/* Left Start: Birth Year Badge */
+.track-birth-badge {
   position: absolute;
+  left: 0;
   top: 0;
   bottom: 0;
-  opacity: 0.35;
-  border-radius: 12px;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 12px 0 0 12px;
+  z-index: 10;
+  white-space: nowrap;
 }
 
-.architect-bar-group:hover .active-era-fill {
+/* Identity: Star + Avatar + Name */
+.track-identity {
+  position: absolute;
+  left: 54px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.track-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+}
+
+.track-name {
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.track-master-star {
+  color: #fbbf24;
+  font-size: 0.85rem;
+}
+
+/* Active Working Span (Line behind the name) */
+.track-active-span {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: 10px;
+  opacity: 0.35;
+  display: flex;
+  align-items: center;
+  padding-left: 210px;
+  padding-right: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.architect-bar-group:hover .track-active-span {
   opacity: 0.55;
 }
 
-/* Connecting Stem Line to Central Axis */
+.active-span-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+/* Right End: Death Year & Age Badge */
+.track-death-badge {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: rgba(13, 17, 23, 0.92);
+  border-left: 1px solid var(--border-color);
+  border-radius: 0 12px 12px 0;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.track-age {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+/* Connecting Stem to Central Axis */
 .axis-connecting-stem {
   position: absolute;
   width: 1px;
-  background: rgba(255, 255, 255, 0.15);
   pointer-events: none;
-  transition: background 0.2s;
-}
-
-.architect-bar-group:hover .axis-connecting-stem {
-  background: var(--text-accent);
-  width: 2px;
+  transition: opacity 0.2s;
 }
 
 .stem-birth-dot {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
-}
-
-/* Text inside Bar */
-.bar-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.bar-name {
-  font-family: var(--font-serif);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.bar-meta {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-}
-
-.bar-master-star {
-  font-size: 0.75rem;
-  color: #fbbf24;
-  margin-right: 2px;
+  z-index: 22;
 }
 
 /* Dimmed / Highlighted state */
 .architect-bar-group.dimmed {
-  opacity: 0.18;
+  opacity: 0.15;
 }
 
-.architect-bar-group.highlighted .lifespan-bar {
+.architect-bar-group.highlighted .lifespan-track {
   border-width: 2.5px !important;
-  box-shadow: 0 0 16px rgba(88, 166, 255, 0.7) !important;
+  box-shadow: 0 0 20px rgba(88, 166, 255, 0.8) !important;
   filter: brightness(1.25);
 }
 

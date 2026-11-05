@@ -13,17 +13,22 @@ class ArchiTimeline {
     this.searchQuery = "";
     this.viewMode = "chart"; // 'chart' (연표 막대 뷰) | 'cards' (전통 카드 뷰)
 
-    // 연표 차트 시간 스케일 상수
+    // 연표 차트 시간 스케일 상수 (수학적 1:1 절대 시간 좌표)
     this.START_YEAR = 1830;
     this.END_YEAR = 2026;
     this.TOTAL_YEARS = this.END_YEAR - this.START_YEAR;
-    this.PX_PER_YEAR = 17; // 1년당 17px
-    this.LEFT_OFFSET = 60; // 좌측 여백
-    this.LANE_HEIGHT = 28; // 레인 높이 (24px 바 + 4px 여백)
-    this.AXIS_GAP = 28; // 중앙 축과 레인 사이 간격
+    this.PX_PER_YEAR = 18; // 1년당 18px (완벽한 가독성)
+    this.LEFT_OFFSET = 100; // 좌측 시작 여백
+    this.LANE_HEIGHT = 32; // 레인 높이 (26px 바 + 6px 여백)
+    this.AXIS_GAP = 32; // 중앙 축과 레인 사이 간격
     
     this.selectedArchitectId = null;
     this.dragBound = false;
+  }
+
+  // 절대 연도 -> X 픽셀 좌표 변환 단일 기준 공식 (Single Source of Truth)
+  yearToX(year) {
+    return this.LEFT_OFFSET + (year - this.START_YEAR) * this.PX_PER_YEAR;
   }
 
   setData(architects, edges, eras) {
@@ -60,14 +65,14 @@ class ArchiTimeline {
   }
 
   setZoom(pxPerYear) {
-    this.PX_PER_YEAR = Math.max(9, Math.min(28, pxPerYear));
+    this.PX_PER_YEAR = Math.max(10, Math.min(30, pxPerYear));
     this.render();
   }
 
   scrollToYear(year) {
     if (!this.container) return;
-    const x = (year - this.START_YEAR) * this.PX_PER_YEAR + this.LEFT_OFFSET;
-    this.container.scrollTo({ left: Math.max(0, x - 260), behavior: 'smooth' });
+    const x = this.yearToX(year);
+    this.container.scrollTo({ left: Math.max(0, x - 280), behavior: 'smooth' });
   }
 
   onActivate() {
@@ -77,8 +82,8 @@ class ArchiTimeline {
         // 중앙 시간축이 화면 정중앙에 오도록 수직 스크롤 정렬
         const targetScrollTop = Math.max(0, this.currentAxisY - (this.container.clientHeight / 2));
         this.container.scrollTop = targetScrollTop;
-        // 1860년대(근대 건축의 여명기)가 보이도록 시작 위치 정렬
-        this.container.scrollLeft = 0;
+        // 1860년대(근대 건축의 태동기)가 시작 부분에 오도록 스크롤 정렬
+        this.scrollToYear(1860);
       }
     }, 40);
   }
@@ -97,10 +102,10 @@ class ArchiTimeline {
   }
 
   // ========================================================
-  // 1. 생애 및 활동 연표 차트 (Zero-Collision Dynamic Lane Packing)
+  // 1. 생애 및 활동 연표 차트 (Full-Span Tracks & 1:1 Time Precision)
   // ========================================================
   renderLifespanChart() {
-    const totalWidth = this.TOTAL_YEARS * this.PX_PER_YEAR + this.LEFT_OFFSET * 2;
+    const totalWidth = this.LEFT_OFFSET + (this.TOTAL_YEARS * this.PX_PER_YEAR) + 140;
     const eraMap = {};
     this.eras.forEach(e => { eraMap[e.id] = e; });
 
@@ -125,7 +130,7 @@ class ArchiTimeline {
     const masterIds = ["frank-lloyd-wright", "le-corbusier", "ludwig-mies", "walter-gropius", "alvar-aalto"];
     const isMaster = (id) => masterIds.includes(id);
 
-    // 4대 거장은 축에 가장 가까운 0, 1 레인에 우선 배정되도록 우선 정렬 후 출생순 정렬
+    // 4대 거장은 축에 가장 가까운 레인(0, 1)에 우선 배치되도록 정렬 후 출생순 정렬
     const sortedList = [...list].sort((a, b) => {
       const isMasterA = masterIds.includes(a.id);
       const isMasterB = masterIds.includes(b.id);
@@ -134,9 +139,10 @@ class ArchiTimeline {
       return a.birth - b.birth;
     });
 
-    // 절대 겹침 없는 무충돌 동적 레인 패킹 (위/아래 양방향 최단 거리 탐색)
-    const aboveLanes = []; // 각 레인의 오른쪽 끝 X 좌표
+    // 절대 겹침 없는 무충돌 동적 레인 패킹 (실제 출생X ~ 사망X 전체 구간 기준)
+    const aboveLanes = []; // 각 레인의 오른쪽 끝 점유 X 좌표
     const belowLanes = [];
+    const GAP = 18; // 레인 내 막대 간 최소 픽셀 간격
 
     const placedBars = sortedList.map(arch => {
       const birth = arch.birth;
@@ -144,16 +150,17 @@ class ArchiTimeline {
       const activeStart = Math.min(death, birth + 25);
       const master = isMaster(arch.id);
 
-      const barLeft = (birth - this.START_YEAR) * this.PX_PER_YEAR + this.LEFT_OFFSET;
-      const barWidth = Math.max(160, (death - birth) * this.PX_PER_YEAR);
-      const barRight = barLeft + barWidth + 14; // 최소 14px 여백
+      const birthX = this.yearToX(birth);
+      const deathX = this.yearToX(death);
+      const barWidth = deathX - birthX;
+      const barRight = deathX + GAP;
 
       let bestSide = 'above';
       let bestLane = -1;
 
       // 1. 위쪽 레인 중 들어갈 수 있는 가장 낮은 인덱스 탐색
       for (let l = 0; l < aboveLanes.length; l++) {
-        if (barLeft >= aboveLanes[l]) {
+        if (birthX >= aboveLanes[l]) {
           bestLane = l;
           bestSide = 'above';
           break;
@@ -163,7 +170,7 @@ class ArchiTimeline {
       // 2. 아래쪽 레인 중 들어갈 수 있는 가장 낮은 인덱스 탐색
       let bestBelowLane = -1;
       for (let l = 0; l < belowLanes.length; l++) {
-        if (barLeft >= belowLanes[l]) {
+        if (birthX >= belowLanes[l]) {
           bestBelowLane = l;
           break;
         }
@@ -171,7 +178,6 @@ class ArchiTimeline {
 
       // 3. 축에서 가장 가까운(lane index가 가장 작은) 방향 결정
       if (bestLane === -1 && bestBelowLane === -1) {
-        // 둘 다 기존 빈 레인이 없으면 레인이 더 적은 쪽에 새 레인 생성
         if (aboveLanes.length <= belowLanes.length) {
           bestSide = 'above';
           bestLane = aboveLanes.length;
@@ -207,7 +213,8 @@ class ArchiTimeline {
         isMaster: master,
         side: bestSide,
         laneIndex: bestLane,
-        barLeft,
+        birthX,
+        deathX,
         barWidth
       };
     });
@@ -217,11 +224,11 @@ class ArchiTimeline {
 
     // 컴팩트 수직 좌표 계산
     const aboveBlockHeight = numAbove * this.LANE_HEIGHT;
-    const axisY = aboveBlockHeight + this.AXIS_GAP + 20;
-    const totalHeight = axisY + this.AXIS_GAP + (numBelow * this.LANE_HEIGHT) + 60;
+    const axisY = aboveBlockHeight + this.AXIS_GAP + 24;
+    const totalHeight = axisY + this.AXIS_GAP + (numBelow * this.LANE_HEIGHT) + 70;
     this.currentAxisY = axisY;
 
-    // 10년 단위 눈금
+    // 10년 단위 눈금 생성 (1840 ~ 2020, 2026)
     const ticks = [];
     for (let yr = 1840; yr <= 2020; yr += 10) {
       ticks.push(yr);
@@ -253,8 +260,8 @@ class ArchiTimeline {
             <button class="btn" id="btn-jump-masters" title="근대 4대 거장 시대로 점프" style="padding: 4px 10px; font-size: 0.78rem;">
               <span>⭐ 4대 거장 시대로</span>
             </button>
-            <button class="btn" id="btn-zoom-fit" title="한눈에 보기 (시작점 정렬)" style="padding: 4px 8px; font-size: 0.78rem;">
-              <span>전체 맞춤</span>
+            <button class="btn" id="btn-zoom-fit" title="한눈에 보기 (1860년 정렬)" style="padding: 4px 8px; font-size: 0.78rem;">
+              <span>초기 정렬</span>
             </button>
             <button class="btn btn-icon" id="btn-timeline-zoom-in" title="시간축 확대" style="padding: 4px 8px;">
               <span>+</span>
@@ -266,19 +273,32 @@ class ArchiTimeline {
         </div>
 
         <div class="timeline-info-badge">
-          <span>총 <strong>${list.length}</strong>인의 건축가 생애 바 (1830 ~ 2026)</span>
+          <span>총 <strong>${list.length}</strong>인의 건축가 생애·활동 연표 (1830 ~ 2026)</span>
           <span style="opacity: 0.3;">|</span>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">중앙 시간선을 축으로 위/아래에 전성기 활동 기간이 100% 겹침 없이 표시됩니다. (상하좌우 마우스 드래그 가능)</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">
+            [출생년도 | 이름 | ── 전성기 활동라인 ── | 사망/현재 (수명)] 이 시간축과 1:1로 정확하게 일치합니다.
+          </span>
         </div>
       </div>
 
       <!-- Main Lifespan Chart View -->
       <div class="lifespan-chart-wrapper" id="lifespan-chart-canvas" style="width: ${totalWidth}px; height: ${totalHeight}px; min-height: ${totalHeight}px;">
         
-        <!-- Era Background Bands -->
+        <!-- 1. Background Decade Grid Lines (10년 단위 세로 가이드라인) -->
+        <div class="timeline-grid-lines">
+          ${ticks.map(yr => {
+            const x = this.yearToX(yr);
+            const isMajor = yr % 50 === 0;
+            return `
+              <div class="grid-vertical-line ${isMajor ? 'major' : ''}" style="left: ${x}px;"></div>
+            `;
+          }).join("")}
+        </div>
+
+        <!-- 2. Era Background Color Bands -->
         <div class="era-background-bands">
           ${eraBands.map(b => {
-            const left = (b.start - this.START_YEAR) * this.PX_PER_YEAR;
+            const left = this.yearToX(b.start);
             const width = (b.end - b.start) * this.PX_PER_YEAR;
             return `
               <div class="era-band" style="left: ${left}px; width: ${width}px; border-left-color: ${b.color};">
@@ -288,15 +308,15 @@ class ArchiTimeline {
           }).join("")}
         </div>
 
-        <!-- Central Timeline Axis Line (중심 기준선) -->
-        <div class="central-axis-line" style="top: ${axisY}px;">
+        <!-- 3. Central Timeline Axis Line (중심 기준 시간선) -->
+        <div class="central-axis-line" style="left: ${this.yearToX(1830)}px; width: ${(this.END_YEAR - this.START_YEAR) * this.PX_PER_YEAR}px; top: ${axisY}px;">
           <div class="axis-label-center">TIMELINE AXIS · 1830 – 2026</div>
         </div>
 
-        <!-- Year Ticks & Numbers on the Axis -->
+        <!-- 4. Year Ticks & Numbers on the Axis -->
         <div class="year-ticks-container" style="top: ${axisY - 8}px;">
           ${ticks.map(yr => {
-            const x = (yr - this.START_YEAR) * this.PX_PER_YEAR;
+            const x = this.yearToX(yr);
             const isMajor = yr % 20 === 0 || yr === 2026;
             return `
               <div class="year-tick" style="left: ${x}px;">
@@ -307,12 +327,12 @@ class ArchiTimeline {
           }).join("")}
         </div>
 
-        <!-- Vertical Hover Probe Line -->
+        <!-- 5. Vertical Hover Probe Line -->
         <div class="timeline-probe-line" id="timeline-probe-line">
           <div class="probe-year-bubble" id="probe-year-bubble" style="top: ${axisY - 42}px;">1920</div>
         </div>
 
-        <!-- Lifespan Bars Layer (위 & 아래) -->
+        <!-- 6. Lifespan Bars Layer (출생~사망 1:1 완벽 연계 트랙) -->
         <div class="lifespan-bars-layer">
           ${placedBars.map(bar => this.createLifespanBarHtml(bar, axisY, eraMap)).join("")}
         </div>
@@ -328,56 +348,77 @@ class ArchiTimeline {
     const arch = bar.architect;
     const era = eraMap[arch.eraId] || { color: "#3b82f6" };
     
-    const barLeft = bar.barLeft;
+    const birthX = bar.birthX;
     const barWidth = bar.barWidth;
     
-    // 본격 활동기 (만 25세 ~ 사망/현재)
-    const activeLeft = (bar.activeStart - bar.birth) * this.PX_PER_YEAR;
-    const activeWidth = Math.max(35, (bar.death - bar.activeStart) * this.PX_PER_YEAR);
+    // 본격 활동 전성기 구간 (만 25세 ~ 사망/현재)
+    const activeStartX = this.yearToX(bar.activeStart);
+    const activeLeft = activeStartX - birthX; // 막대 내부 시작 오프셋
+    const activeWidth = Math.max(40, bar.deathX - activeStartX); // 전성기 활동 폭
+    const activeYears = bar.death - bar.activeStart;
 
-    // 컴팩트 슬림 Y 좌표 계산
+    // 수직 Y 좌표 계산
     let barTop, stemTop, stemHeight;
 
     if (bar.side === "above") {
       barTop = axisY - this.AXIS_GAP - ((bar.laneIndex + 1) * this.LANE_HEIGHT);
-      stemTop = barTop + this.LANE_HEIGHT - 4;
+      stemTop = barTop + this.LANE_HEIGHT - 6;
       stemHeight = axisY - stemTop;
     } else {
-      barTop = axisY + this.AXIS_GAP + (bar.laneIndex * this.LANE_HEIGHT) + 4;
+      barTop = axisY + this.AXIS_GAP + (bar.laneIndex * this.LANE_HEIGHT) + 6;
       stemTop = axisY;
       stemHeight = barTop - axisY;
     }
 
     const age = bar.death - bar.birth;
-    const lifespanText = arch.death ? `${bar.birth}–${bar.death} (${age}세)` : `${bar.birth}–현재 (${age}세)`;
+    const lifespanText = arch.death ? `${bar.birth}–${bar.death} (향년 ${age}세)` : `${bar.birth}–현재 (${age}세)`;
 
     return `
-      <!-- Connecting Stem to Central Axis -->
+      <!-- Connecting Stem to Central Axis (출생년도 기준 수직선) -->
       <div class="axis-connecting-stem" 
-           style="left: ${barLeft}px; top: ${stemTop}px; height: ${stemHeight}px; border-left: 1px dashed ${era.color}; opacity: 0.35;">
+           style="left: ${birthX}px; top: ${stemTop}px; height: ${stemHeight}px; border-left: 1.5px dashed ${era.color}; opacity: 0.4;">
       </div>
       <div class="stem-birth-dot" 
-           style="left: ${barLeft}px; top: ${axisY}px; background: ${era.color};" 
-           title="${arch.nameKo} 출생: ${bar.birth}년">
+           style="left: ${birthX}px; top: ${axisY}px; background: ${era.color}; border: 2px solid var(--bg-primary);" 
+           title="${arch.nameKo} 출생년도: ${bar.birth}년">
       </div>
 
-      <!-- Lifespan Bar Group -->
+      <!-- Lifespan Full-Span Track Group -->
       <div class="architect-bar-group" 
            id="arch-bar-${arch.id}"
            data-id="${arch.id}" 
-           style="left: ${barLeft}px; top: ${barTop}px; width: ${barWidth}px;"
-           title="${arch.nameKo} (${arch.nameEn})&#10;생애: ${lifespanText}&#10;주요 활동기: ${bar.activeStart}년~${bar.death}년&#10;주요 사조: ${arch.movement}">
+           style="left: ${birthX}px; top: ${barTop}px; width: ${barWidth}px;"
+           title="${arch.nameKo} (${arch.nameEn})&#10;생애: ${lifespanText}&#10;본격 활동기: ${bar.activeStart}년 ~ ${bar.death}년 (${activeYears}년간 활동)&#10;대표작: ${arch.masterpiece}">
         
-        <div class="lifespan-bar" style="border-color: ${era.color}; ${bar.isMaster ? 'border-width: 2px; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);' : ''}">
-          <!-- Active Working Years Section inside Lifespan Bar -->
-          <div class="active-era-fill" style="left: ${activeLeft}px; width: ${activeWidth}px; background: ${era.color};"></div>
-
-          <div class="bar-content">
-            ${bar.isMaster ? `<span class="bar-master-star" title="근대 4대 거장">★</span>` : ''}
-            ${arch.portraitImg ? `<img src="${arch.portraitImg}" class="bar-avatar-thumb" loading="lazy" onerror="this.style.display='none'">` : ''}
-            <span class="bar-name">${arch.nameKo}</span>
-            <span class="bar-meta">${lifespanText}</span>
+        <div class="lifespan-track" style="border-color: ${era.color}; ${bar.isMaster ? 'box-shadow: 0 0 12px rgba(59, 130, 246, 0.5); border-width: 2px;' : ''}">
+          
+          <!-- 1. Left Start Cap: 출생년도 뱃지 -->
+          <div class="track-birth-badge" style="background: ${era.color};">
+            <span>${bar.birth}</span>
           </div>
+
+          <!-- 2. Identity: 마스터 스타 + 사진 + 이름 -->
+          <div class="track-identity">
+            ${bar.isMaster ? `<span class="track-master-star" title="근대 4대 거장">★</span>` : ''}
+            ${arch.portraitImg ? `<img src="${arch.portraitImg}" class="track-avatar" loading="lazy" onerror="this.style.display='none'">` : ''}
+            <span class="track-name">${arch.nameKo}</span>
+          </div>
+
+          <!-- 3. Active Working Span: 이름 뒤로 쭉 이어지는 전성기 활동 하이라이트 라인 -->
+          <div class="track-active-span" 
+               style="left: ${activeLeft}px; width: ${activeWidth}px; background: ${era.color};"
+               title="본격 활동기: ${bar.activeStart}년 ~ ${bar.death}년">
+            <span class="active-span-label">
+              활동기 ${bar.activeStart} ~ ${bar.death} (${activeYears}년)
+            </span>
+          </div>
+
+          <!-- 4. Right End Cap: 사망년도(또는 현재) & 나이 뱃지 -->
+          <div class="track-death-badge">
+            <span class="track-death-year">${arch.death ? arch.death + '년' : '현재'}</span>
+            <span class="track-age">(${age}세)</span>
+          </div>
+
         </div>
       </div>
     `;
@@ -528,8 +569,7 @@ class ArchiTimeline {
     }
     if (btnZoomFit) {
       btnZoomFit.addEventListener("click", () => {
-        this.setZoom(10);
-        setTimeout(() => this.container.scrollTo({ left: 0, behavior: 'smooth' }), 30);
+        this.scrollToYear(1860);
       });
     }
     if (btnZoomIn) {
