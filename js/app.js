@@ -27,6 +27,11 @@ class ArchiApp {
     this.setupModals();
     this.setupGlobalEvents();
     
+    // 5. ArchiStudy (4대 거장 비교, 사조 가이드, 고해상도 도면 라이트박스, 건축사 퀴즈)
+    if (window.ArchiStudy) {
+      this.study = new ArchiStudy(this);
+    }
+
     // 초기 렌더링 및 뷰 활성화
     this.updateDataViews();
     this.switchView(this.currentView);
@@ -46,11 +51,21 @@ class ArchiApp {
   }
 
   // ========================================================
-  // DATA MANAGEMENT & LOCALSTORAGE
+  // DATA MANAGEMENT & LOCALSTORAGE (v2 검증된 학술 데이터베이스)
   // ========================================================
   loadData() {
-    const savedArchitects = localStorage.getItem('archi_architects_v1');
-    const savedEdges = localStorage.getItem('archi_edges_v1');
+    const DATA_VERSION = 'archi_architects_v2';
+    const EDGES_VERSION = 'archi_edges_v2';
+
+    // 이전 v1의 사용자 작성 커스텀 메모 보존 및 마이그레이션
+    const oldNotes = {};
+    try {
+      const v1 = JSON.parse(localStorage.getItem('archi_architects_v1') || '[]');
+      v1.forEach(a => { if (a.customNotes) oldNotes[a.id] = a.customNotes; });
+    } catch(e) {}
+
+    const savedArchitects = localStorage.getItem(DATA_VERSION);
+    const savedEdges = localStorage.getItem(EDGES_VERSION);
 
     if (savedArchitects) {
       try {
@@ -60,7 +75,11 @@ class ArchiApp {
         this.architects = [...(window.INITIAL_ARCHITECTS || [])];
       }
     } else {
-      this.architects = [...(window.INITIAL_ARCHITECTS || [])];
+      this.architects = (window.INITIAL_ARCHITECTS || []).map(a => {
+        if (oldNotes[a.id]) a.customNotes = oldNotes[a.id];
+        return a;
+      });
+      this.saveData();
     }
 
     if (savedEdges) {
@@ -72,12 +91,14 @@ class ArchiApp {
       }
     } else {
       this.edges = [...(window.INFLUENCE_EDGES || [])];
+      this.saveData();
     }
   }
 
   saveData() {
-    localStorage.setItem('archi_architects_v1', JSON.stringify(this.architects));
-    localStorage.setItem('archi_edges_v1', JSON.stringify(this.edges));
+    localStorage.setItem('archi_architects_v2', JSON.stringify(this.architects));
+    localStorage.setItem('archi_edges_v2', JSON.stringify(this.edges));
+    if (this.study) this.study.updateData(this.architects);
     this.updateDataViews();
   }
 
@@ -85,9 +106,12 @@ class ArchiApp {
     if (confirm("정말 기본 데이터베이스로 초기화하시겠습니까? 작성한 메모와 새로 추가한 건축가가 모두 초기화됩니다.")) {
       localStorage.removeItem('archi_architects_v1');
       localStorage.removeItem('archi_edges_v1');
+      localStorage.removeItem('archi_architects_v2');
+      localStorage.removeItem('archi_edges_v2');
       this.architects = [...(window.INITIAL_ARCHITECTS || [])];
       this.edges = [...(window.INFLUENCE_EDGES || [])];
       this.updateDataViews();
+      if (this.study) this.study.updateData(this.architects);
       this.showToast("기본 데이터로 성공적으로 초기화되었습니다.");
     }
   }
@@ -314,19 +338,50 @@ class ArchiApp {
     const captionTag = document.getElementById('drawer-media-caption-tag');
     if (!imgEl) return;
 
+    this.currentDrawerMediaType = type;
+    imgEl.style.cursor = 'zoom-in';
+
     if (type === 'portrait') {
-      imgEl.src = arch.portraitImg || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80';
+      imgEl.src = arch.portraitImg;
       if (captionTitle) captionTitle.textContent = `${arch.nameKo} (${arch.nameEn})`;
-      if (captionTag) captionTag.textContent = "공식 인물 사진";
+      if (captionTag) captionTag.textContent = "🔍 클릭하여 고해상도로 확대";
     } else if (type === 'building') {
-      imgEl.src = arch.buildingImg || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80';
+      imgEl.src = arch.buildingImg;
       if (captionTitle) captionTitle.textContent = arch.masterpiece.split(',')[0];
-      if (captionTag) captionTag.textContent = "대표 건축물";
+      if (captionTag) captionTag.textContent = "🔍 클릭하여 고해상도로 확대";
     } else if (type === 'blueprint') {
-      imgEl.src = arch.blueprintImg || 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80';
-      if (captionTitle) captionTitle.textContent = `${arch.nameKo} - 대표작 도면 / 다이어그램`;
-      if (captionTag) captionTag.textContent = "건축 도면 / 평면도";
+      imgEl.src = arch.blueprintImg;
+      if (captionTitle) captionTitle.textContent = `${arch.nameKo} - ${arch.blueprintType || '대표작 설계 도면'}`;
+      if (captionTag) captionTag.textContent = "📐 클릭하여 고해상도 도면 돋보기로 보기";
     }
+
+    imgEl.onclick = () => {
+      if (this.study) {
+        let title = `${arch.nameKo} - `;
+        let drawType = "건축 사진";
+        let desc = arch.desc;
+        let url = arch.buildingImg;
+
+        if (this.currentDrawerMediaType === 'blueprint') {
+          title += arch.blueprintType || "설계 평면도";
+          drawType = arch.blueprintType || "평면도";
+          desc = arch.blueprintDesc || arch.desc;
+          url = arch.blueprintImg;
+        } else if (this.currentDrawerMediaType === 'portrait') {
+          title += "공식 인물 초상화";
+          drawType = "인물 사진";
+          desc = `${arch.nameKo} (${arch.birth}–${arch.death || '현재'}) · ${arch.movement}`;
+          url = arch.portraitImg;
+        } else {
+          title += arch.masterpiece.split(',')[0];
+          drawType = "대표 건축물";
+          desc = `대표작: ${arch.masterpiece}. ${arch.desc}`;
+          url = arch.buildingImg;
+        }
+
+        this.study.openBlueprint(arch, url, title, drawType, desc);
+      }
+    };
   }
 
   openDetailDrawer(architect) {

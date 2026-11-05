@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+KR:wght@400;600;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=20261105_1">
+  <link rel="stylesheet" href="css/style.css?v=20261105_2">
 
   <!-- Core Libraries (로컬 오프라인 라이브러리) -->
   <script src="js/d3.v7.min.js"></script>
@@ -50,6 +50,34 @@
         <span>도면 & 명작 갤러리</span>
       </button>
     </nav>
+
+    <!-- Dedicated Study Navigation Group -->
+    <div class="study-nav-group">
+      <button class="btn btn-study" id="btn-open-masters-matrix" title="근대 4대 거장 집중 비교 연구">
+        <i data-lucide="columns"></i>
+        <span>4대 거장 비교표</span>
+      </button>
+      <button class="btn btn-study" id="btn-open-comparator" title="건축가 1:1 맞비교 분석">
+        <i data-lucide="git-compare"></i>
+        <span>1:1 비교</span>
+      </button>
+      <button class="btn btn-study" id="btn-open-movements-guide" title="근현대 건축 사조 & 매니페스토 총정리">
+        <i data-lucide="book-open"></i>
+        <span>사조 가이드</span>
+      </button>
+      <button class="btn btn-study" id="btn-open-glossary" title="건축 공간 & 기술 핵심 용어 사전">
+        <i data-lucide="file-text"></i>
+        <span>용어 사전</span>
+      </button>
+      <button class="btn btn-study btn-quiz-glow" id="btn-open-quiz-modal" title="건축사 시험 대비 퀴즈 & 플래시카드">
+        <i data-lucide="help-circle"></i>
+        <span>건축사 퀴즈</span>
+      </button>
+      <button class="btn btn-study" id="btn-open-study-export" title="시험 대비 핵심 서브노트 인쇄 및 마크다운 내보내기">
+        <i data-lucide="printer"></i>
+        <span>요약집 인쇄</span>
+      </button>
+    </div>
 
     <!-- Header Actions -->
     <div class="header-actions">
@@ -420,12 +448,164 @@
     </div>
   </div>
 
+  <!-- ==========================================
+       MODAL 3: 4대 거장 정밀 비교 매트릭스
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-masters-matrix">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="study-badge">학술 심층 연구</span>
+          <h3 class="modal-title">🏛️ 근대 4대 거장 (+ 알바 알토) 핵심 비교 매트릭스</h3>
+        </div>
+        <button class="btn-icon study-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div id="masters-matrix-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 4: 근현대 건축 사조 & 매니페스토 가이드
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-movements-guide">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="study-badge">건축사 총정리</span>
+          <h3 class="modal-title">📚 근현대 건축 사조 & 선언문 (Manifestos) 타임가이드</h3>
+        </div>
+        <button class="btn-icon study-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="movements-guide-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 5: 고해상도 도면 돋보기 & 다이어그램 라이트박스
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-blueprint-lightbox">
+    <div class="modal-card modal-fullscreen">
+      <div class="lightbox-top-bar">
+        <div class="lb-header-info">
+          <span class="badge" id="lightbox-type-badge">평면도</span>
+          <h3 class="lb-title" id="lightbox-title">도면 뷰어</h3>
+          <span class="lb-meta" id="lightbox-meta"></span>
+        </div>
+        <div class="lb-controls">
+          <button class="btn-icon" id="btn-lb-zoom-out" title="축소"><i data-lucide="zoom-out"></i></button>
+          <span class="lb-zoom-level" id="lightbox-zoom-val">100%</span>
+          <button class="btn-icon" id="btn-lb-zoom-in" title="확대"><i data-lucide="zoom-in"></i></button>
+          <button class="btn-icon" id="btn-lb-reset" title="원래대로"><i data-lucide="rotate-ccw"></i></button>
+          <a class="btn-icon" id="lightbox-original-link" target="_blank" title="위키미디어 원본 파일 열기"><i data-lucide="external-link"></i></a>
+          <button class="btn-icon study-modal-close" title="닫기"><i data-lucide="x"></i></button>
+        </div>
+      </div>
+      <div class="lightbox-body">
+        <div class="lightbox-canvas-area" id="lightbox-canvas-area">
+          <img id="lightbox-image" src="" alt="건축 도면">
+        </div>
+        <div class="lightbox-explanation-bar">
+          <i data-lucide="compass"></i>
+          <p id="lightbox-desc">건축학적 도면 해설</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 6: 건축사 자가진단 퀴즈 & 플래시카드
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-quiz">
+    <div class="modal-card modal-quiz-card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="study-badge">자가 진단 & 암기</span>
+          <h3 class="modal-title">🧠 건축사 시험 대비 스터디 퀴즈</h3>
+        </div>
+        <button class="btn-icon study-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="quiz-header-bar">
+        <div class="quiz-modes-tabs">
+          <button class="quiz-mode-btn active" data-mode="visual">🏛️ 도면·건물 맞추기</button>
+          <button class="quiz-mode-btn" data-mode="quote">💬 명언·철학 매칭</button>
+          <button class="quiz-mode-btn" data-mode="genealogy">🌲 사제·계보 족보</button>
+        </div>
+        <div class="quiz-stats-group">
+          <span class="quiz-stat-pill">점수: <strong id="quiz-score-val">0</strong> / <span id="quiz-total-val">0</span></span>
+          <span class="quiz-stat-pill streak-pill">연속 정답 🔥 <strong id="quiz-streak-val">0</strong></span>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 24px;">
+        <div id="quiz-question-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 7: 1:1 건축가 심층 맞비교 분석기
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-comparator">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="study-badge">1:1 맞비교 분석</span>
+          <h3 class="modal-title">⚖️ 건축가 1:1 심층 비교 분석기</h3>
+        </div>
+        <button class="btn-icon study-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div id="comparator-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 8: 건축 공간 & 기술 핵심 용어 사전
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-glossary">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="study-badge">건축 개념 사전</span>
+          <h3 class="modal-title">📖 건축 공간 & 기술 핵심 용어 사전</h3>
+        </div>
+        <button class="btn-icon study-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="glossary-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 9: 근현대 건축사 핵심 요약 서브노트 인쇄 및 마크다운 내보내기
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-study-export">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="study-badge">수험 자료집</span>
+          <h3 class="modal-title">📄 근현대 건축사 핵심 요약 서브노트</h3>
+        </div>
+        <button class="btn-icon study-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="study-export-container"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Application Scripts (의존성 순서대로 명확히 로드) -->
-  <script src="js/data.js?v=20261105_1"></script>
-  <script src="js/graph.js?v=20261105_1"></script>
-  <script src="js/timeline.js?v=20261105_1"></script>
-  <script src="js/cards.js?v=20261105_1"></script>
-  <script src="js/gallery.js?v=20261105_1"></script>
-  <script src="js/app.js?v=20261105_1"></script>
+  <script src="js/data.js?v=20261105_2"></script>
+  <script src="js/graph.js?v=20261105_2"></script>
+  <script src="js/timeline.js?v=20261105_2"></script>
+  <script src="js/cards.js?v=20261105_2"></script>
+  <script src="js/gallery.js?v=20261105_2"></script>
+  <script src="js/study.js?v=20261105_2"></script>
+  <script src="js/app.js?v=20261105_2"></script>
 </body>
 </html>

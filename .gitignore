@@ -5,3 +5,6 @@ Thumbs.db
 # Test scripts & logs
 test_*.js
 *.log
+
+.tmp.driveupload/
+scratch_candidates.json

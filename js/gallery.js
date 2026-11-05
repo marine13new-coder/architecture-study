@@ -154,7 +154,7 @@ class ArchiGallery {
                     <img src="${item.img}" 
                          alt="${item.title}" 
                          loading="lazy" 
-                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80';">
+                         onerror="this.style.opacity='0.25';">
                     <span class="gallery-tag-badge" style="background: ${item.type === 'blueprint' ? 'rgba(37, 99, 235, 0.9)' : item.type === 'building' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(139, 92, 246, 0.9)'};">
                       ${item.typeLabel}
                     </span>
@@ -190,12 +190,49 @@ class ArchiGallery {
   bindEvents() {
     const cards = this.container.querySelectorAll(".gallery-card");
     cards.forEach(card => {
+      const id = card.getAttribute("data-id");
+      const type = card.getAttribute("data-type");
+      const arch = this.architects.find(a => a.id === id);
+      if (!arch) return;
+
+      const imgWrapper = card.querySelector('.gallery-img-wrapper');
+      if (imgWrapper) {
+        imgWrapper.style.cursor = 'zoom-in';
+        imgWrapper.title = "🔍 클릭하여 고해상도 돋보기로 크게 보기";
+        imgWrapper.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (window.app && window.app.study) {
+            let title = `${arch.nameKo} - `;
+            let drawType = "건축 미디어";
+            let desc = arch.desc;
+            let url = arch.buildingImg;
+
+            if (type === 'blueprint') {
+              title += arch.blueprintType || "설계 도면";
+              drawType = arch.blueprintType || "평면도";
+              desc = arch.blueprintDesc || arch.desc;
+              url = arch.blueprintImg;
+            } else if (type === 'portrait') {
+              title += "공식 인물 초상화";
+              drawType = "인물 사진";
+              desc = `${arch.nameKo} (${arch.birth}–${arch.death || '현재'}) · ${arch.movement}`;
+              url = arch.portraitImg;
+            } else {
+              title += arch.masterpiece.split(',')[0];
+              drawType = "대표 건축물";
+              desc = `대표작: ${arch.masterpiece}. ${arch.desc}`;
+              url = arch.buildingImg;
+            }
+
+            window.app.study.openBlueprint(arch, url, title, drawType, desc);
+          } else {
+            this.onSelectArchitect(arch);
+          }
+        });
+      }
+
       card.addEventListener("click", () => {
-        const id = card.getAttribute("data-id");
-        const arch = this.architects.find(a => a.id === id);
-        if (arch) {
-          this.onSelectArchitect(arch);
-        }
+        this.onSelectArchitect(arch);
       });
     });
 

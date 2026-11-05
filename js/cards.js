@@ -99,8 +99,8 @@ class ArchiCards {
               const era = eraMap[arch.eraId] || { name: "", color: "#58a6ff" };
               const lifespan = arch.death ? `${arch.birth} – ${arch.death}` : `${arch.birth} – 현재`;
               const masterBadge = isMaster(arch.id);
-              const bannerImg = arch.buildingImg || arch.blueprintImg || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80';
-              const portrait = arch.portraitImg || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80';
+              const bannerImg = arch.buildingImg || arch.blueprintImg;
+              const portrait = arch.portraitImg;
 
               return `
                 <div class="timeline-card archive-card-item" data-id="${arch.id}" style="border-top: 3px solid ${era.color};">
@@ -110,19 +110,19 @@ class ArchiCards {
                          alt="${arch.masterpiece}" 
                          class="card-banner-bg" 
                          loading="lazy" 
-                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80';">
+                         onerror="this.style.opacity='0.2';">
                     <div class="card-banner-overlay"></div>
                     
                     <div class="card-portrait-badge">
                       <img src="${portrait}" 
                            alt="${arch.nameKo}" 
                            loading="lazy" 
-                           onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';">
+                           onerror="this.style.display='none';">
                     </div>
 
                     ${masterBadge ? `
                       <span class="card-master-tag">
-                        ★ 근대 4대거장
+                        ★ 근대 4대 거장
                       </span>
                     ` : ''}
                     
