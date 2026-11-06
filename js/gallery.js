@@ -154,7 +154,7 @@ class ArchiGallery {
                     <img src="${item.img}" 
                          alt="${item.title}" 
                          loading="lazy" 
-                         onerror="this.style.opacity='0.25';">
+                         onerror="this.onerror=null; this.src='assets/img/${item.type === 'portrait' ? 'portraits' : item.type === 'blueprint' ? 'blueprints' : 'buildings'}/${arch.id}.jpg';">
                     <span class="gallery-tag-badge" style="background: ${item.type === 'blueprint' ? 'rgba(37, 99, 235, 0.9)' : item.type === 'building' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(139, 92, 246, 0.9)'};">
                       ${item.typeLabel}
                     </span>

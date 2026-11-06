@@ -1,7 +1,7 @@
 // ========================================================
-// ARCHI-GENEALOGY: Master Verified Academic Database
-// 5개 시대(Eras), 50인 대표 건축가 심층 학술 데이터, 사제·영향 계보선
-// 100% 검증된 학술 자료 및 위키미디어 공용(Wikimedia Commons) 실물 자산
+// ARCHI-GENEALOGY DATA ENGINE (v3 LOCAL ASSET ENHANCED)
+// 100% 공인 학술 자료 및 로컬 에셋 기반 고해상도 아카이브
+// Total: 50 canonical architects, 150 local high-res visual assets
 // ========================================================
 
 const ERAS = [
@@ -69,9 +69,9 @@ const INITIAL_ARCHITECTS = [
     ],
     "influencedBy": [],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/William%20Morris%20age%2053.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Red%20House%20Bexleyheath.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Red%20House%20Plan%20Ground%20Floor.jpg?width=800",
+    "portraitImg": "assets/img/portraits/william-morris.jpg",
+    "buildingImg": "assets/img/buildings/william-morris.jpg",
+    "blueprintImg": "assets/img/blueprints/william-morris.jpg",
     "blueprintType": "1층 평면도 (Ground Floor Plan)",
     "blueprintDesc": "L자형 비대칭 배치로 기능적 동선과 자연 채광을 우선시한 근대 주거 평면의 선구적 프로토타입.",
     "philosophyKeywords": [
@@ -121,9 +121,9 @@ const INITIAL_ARCHITECTS = [
       "william-morris"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/HHRichardson.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Trinity%20Church%20Boston%202019.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Trinity%20Church%20Boston%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/henry-richardson.jpg",
+    "buildingImg": "assets/img/buildings/henry-richardson.jpg",
+    "blueprintImg": "assets/img/blueprints/henry-richardson.jpg",
     "blueprintType": "그리스 십자 평면도 (Greek Cross Plan)",
     "blueprintDesc": "거대한 중앙 탑을 중심으로 4개의 짧은 신랑이 균형을 이루며 육중한 하중을 효과적으로 분산시킨 집중형 평면.",
     "philosophyKeywords": [
@@ -172,9 +172,9 @@ const INITIAL_ARCHITECTS = [
     ],
     "influencedBy": [],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Otto%20Wagner%201910.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Wien%20Postsparkasse%202005.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Postsparkasse%20Wien%20Grundriss.png?width=800",
+    "portraitImg": "assets/img/portraits/otto-wagner.jpg",
+    "buildingImg": "assets/img/buildings/otto-wagner.jpg",
+    "blueprintImg": "assets/img/blueprints/otto-wagner.jpg",
     "blueprintType": "중앙 은행홀 평면도 (Main Banking Hall Plan)",
     "blueprintDesc": "사다리꼴 대지 조건에 완벽히 대응한 대칭형 바실리카 평면으로, 중앙 홀에 천창 자연광을 극대화한 기능적 구성.",
     "philosophyKeywords": [
@@ -221,9 +221,9 @@ const INITIAL_ARCHITECTS = [
     "influences": [],
     "influencedBy": [],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Antoni%20Gaudi%201878.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Sagrada%20Familia%2001.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Casa%20Mila%20plan.jpg?width=800",
+    "portraitImg": "assets/img/portraits/antoni-gaudi.jpg",
+    "buildingImg": "assets/img/buildings/antoni-gaudi.jpg",
+    "blueprintImg": "assets/img/blueprints/antoni-gaudi.jpg",
     "blueprintType": "카사 밀라 기준층 평면도 (Typical Floor Plan)",
     "blueprintDesc": "직선 벽체가 전무하고 파도치는 유기적 곡선 격벽과 내부 중정 채광을 조율한 혁신적인 자유 평면.",
     "philosophyKeywords": [
@@ -273,9 +273,9 @@ const INITIAL_ARCHITECTS = [
       "henry-richardson"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Louis%20Sullivan%201890s.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Wainwright%20Building%20St%20Louis.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Wainwright%20Building%20Floor%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/louis-sullivan.jpg",
+    "buildingImg": "assets/img/buildings/louis-sullivan.jpg",
+    "blueprintImg": "assets/img/blueprints/louis-sullivan.jpg",
     "blueprintType": "기준층 U자형 평면도 (Typical Floor Plan)",
     "blueprintDesc": "모든 사무실이 균일한 자연광과 환기를 공급받도록 배려한 U자형 평면 구조와 엘리베이터 코어 배치.",
     "philosophyKeywords": [
@@ -326,9 +326,9 @@ const INITIAL_ARCHITECTS = [
       "william-morris"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Hendrik%20Petrus%20Berlage%201914.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Beurs%20van%20Berlage%20Amsterdam.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Beurs%20van%20Berlage%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/hendrik-berlage.jpg",
+    "buildingImg": "assets/img/buildings/hendrik-berlage.jpg",
+    "blueprintImg": "assets/img/blueprints/hendrik-berlage.jpg",
     "blueprintType": "증권거래소 종합 평면도 (General Ground Plan)",
     "blueprintDesc": "상품거래소, 주식거래소, 곡물거래소 등 3개의 거대한 홀을 명쾌한 벽돌 볼륨으로 구획한 기념비적 평면.",
     "philosophyKeywords": [
@@ -376,9 +376,9 @@ const INITIAL_ARCHITECTS = [
     ],
     "influencedBy": [],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Victor%20Horta%201900.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Hotel%20Tassel%20Brussels%20facade.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Hotel%20Tassel%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/victor-horta.jpg",
+    "buildingImg": "assets/img/buildings/victor-horta.jpg",
+    "blueprintImg": "assets/img/blueprints/victor-horta.jpg",
     "blueprintType": "타셀 저택 주 층 평면도 (Main Floor Plan)",
     "blueprintDesc": "전통적 협소 대지의 암울한 중복도 방식을 타파하고, 중앙 계단실과 천창을 중심으로 빛을 사방에 분배한 혁신적 평면.",
     "philosophyKeywords": [
@@ -430,9 +430,9 @@ const INITIAL_ARCHITECTS = [
       "otto-wagner"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Behrens%201913.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/AEG%20Turbinenfabrik%20Berlin.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/AEG%20Turbinenfabrik%20section.png?width=800",
+    "portraitImg": "assets/img/portraits/peter-behrens.jpg",
+    "buildingImg": "assets/img/buildings/peter-behrens.jpg",
+    "blueprintImg": "assets/img/blueprints/peter-behrens.jpg",
     "blueprintType": "공장 횡단면도 (Cross Section)",
     "blueprintDesc": "힌지 조인트 철골 3힌지 아치 구조와 대형 유리 커튼월을 결합하여 기둥 없는 거대한 기계 조립 공간을 확보한 단면.",
     "philosophyKeywords": [
@@ -483,9 +483,9 @@ const INITIAL_ARCHITECTS = [
       "otto-wagner"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Adolf%20Loos%201904.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Looshaus%20Michaelerplatz%20Wien.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Villa%20Mueller%20Raumplan%20section.png?width=800",
+    "portraitImg": "assets/img/portraits/adolf-loos.jpg",
+    "buildingImg": "assets/img/buildings/adolf-loos.jpg",
+    "blueprintImg": "assets/img/blueprints/adolf-loos.jpg",
     "blueprintType": "뮐러 저택 라움플란 입체 단면도 (Raumplan Section)",
     "blueprintDesc": "단일한 평면 슬래브를 거부하고 거실, 서재, 응접실, 식당의 천장 높이를 각기 다르게 배치하여 연속적으로 연결한 입체 단면.",
     "philosophyKeywords": [
@@ -535,9 +535,9 @@ const INITIAL_ARCHITECTS = [
       "victor-horta"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Auguste%20Perret%201930.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Notre%20Dame%20du%20Raincy%20Perret.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Rue%20Franklin%2025%20Perret%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/auguste-perret.jpg",
+    "buildingImg": "assets/img/buildings/auguste-perret.jpg",
+    "blueprintImg": "assets/img/blueprints/auguste-perret.jpg",
     "blueprintType": "프랑클랭가 25번지 아파트 기준층 평면도",
     "blueprintDesc": "철근 콘크리트 독립 기둥 구조 덕분에 내력벽 없이 U자형으로 파인 전면 창을 통해 채광을 극대화한 혁신 평면.",
     "philosophyKeywords": [
@@ -591,9 +591,9 @@ const INITIAL_ARCHITECTS = [
       "louis-sullivan"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Frank%20Lloyd%20Wright%20portrait-crop.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Fallingwater%20-%20Kaufmann%20Residence.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Robie%20House%20Floor%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/frank-lloyd-wright.jpg",
+    "buildingImg": "assets/img/buildings/frank-lloyd-wright.jpg",
+    "blueprintImg": "assets/img/blueprints/frank-lloyd-wright.jpg",
     "blueprintType": "로비 하우스 1층 평면도 (Robie House Ground Plan)",
     "blueprintDesc": "중앙 벽난로 코어를 축으로 날개처럼 뻗어나간 개방형 수평 평면. 방과 방 사이의 벽을 허문 '상자의 파괴'의 효시.",
     "philosophyKeywords": [
@@ -654,9 +654,9 @@ const INITIAL_ARCHITECTS = [
       "william-morris"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Walter%20Gropius%201919.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Bauhaus%20Dessau%20Werkstattfluegel.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Bauhaus%20Dessau%20ground%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/walter-gropius.jpg",
+    "buildingImg": "assets/img/buildings/walter-gropius.jpg",
+    "blueprintImg": "assets/img/blueprints/walter-gropius.jpg",
     "blueprintType": "데사우 바우하우스 배치 및 1층 평면도 (Ground Plan)",
     "blueprintDesc": "공방동, 기숙사동, 강의동이 풍차 날개 모양(Pinwheel)으로 분지되어 어떤 방향에서도 정면이 없는 입체적 동적 평면.",
     "philosophyKeywords": [
@@ -713,9 +713,9 @@ const INITIAL_ARCHITECTS = [
       "adolf-loos"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Ludwig%20Mies%20van%20der%20Rohe%201934.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Barcelona%20Pavilion%202011.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Barcelona%20Pavilion%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/ludwig-mies.jpg",
+    "buildingImg": "assets/img/buildings/ludwig-mies.jpg",
+    "blueprintImg": "assets/img/blueprints/ludwig-mies.jpg",
     "blueprintType": "바르셀로나 파빌리온 평면도 (Barcelona Pavilion Plan)",
     "blueprintDesc": "8개의 십자형 크롬 기둥이 얇은 지붕을 받치고, 대리석 벽체는 공간을 가두지 않고 미끄러지듯 유동하는 자유 평면의 정점.",
     "philosophyKeywords": [
@@ -780,9 +780,9 @@ const INITIAL_ARCHITECTS = [
       "adolf-loos"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Le%20Corbusier%201964.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Villa%20Savoye%202017.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Villa%20Savoye%20First%20Floor%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/le-corbusier.jpg",
+    "buildingImg": "assets/img/buildings/le-corbusier.jpg",
+    "blueprintImg": "assets/img/blueprints/le-corbusier.jpg",
     "blueprintType": "빌라 사보아 2층 주거층 평면도 (First Floor Plan)",
     "blueprintDesc": "중앙 램프를 따라 빛이 들어오는 공중 정원 테라스와 슬라이딩 가로창, 기둥 격자 위 자유로운 벽체 분할을 보여주는 5원칙의 완벽한 다이어그램.",
     "philosophyKeywords": [
@@ -844,9 +844,9 @@ const INITIAL_ARCHITECTS = [
       "frank-lloyd-wright"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Alvar%20Aalto%201945.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Paimio%20Sanatorium%202008.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Paimio%20Sanatorium%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/alvar-aalto.jpg",
+    "buildingImg": "assets/img/buildings/alvar-aalto.jpg",
+    "blueprintImg": "assets/img/blueprints/alvar-aalto.jpg",
     "blueprintType": "파이미오 요양원 복합 배치 평면도 (Complex Site Plan)",
     "blueprintDesc": "병실동, 식당동, 일광욕 테라스를 각기 다른 각도로 비틀어 숲속 바람과 태양 광선을 최대로 흡수하도록 설계된 유기적 배치.",
     "philosophyKeywords": [
@@ -899,9 +899,9 @@ const INITIAL_ARCHITECTS = [
       "peter-behrens"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Erich%20Mendelsohn%20cropped.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Einsteinturm%207443.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Mosseverlagshausberlin.jpg?width=800",
+    "portraitImg": "assets/img/portraits/erich-mendelsohn.jpg",
+    "buildingImg": "assets/img/buildings/erich-mendelsohn.jpg",
+    "blueprintImg": "assets/img/blueprints/erich-mendelsohn.jpg",
     "blueprintType": "모세하우스 코너 파사드 입면 (Corner Façade)",
     "blueprintDesc": "기존 고전주의 건물의 모서리를 과감하게 털어내고 미래주의적 수평 줄눈과 유선형 곡면 캐노피를 결합한 혁신 입면.",
     "philosophyKeywords": [
@@ -954,9 +954,9 @@ const INITIAL_ARCHITECTS = [
       "hendrik-berlage"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Gerrit%20Rietveld%201954.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Rietveld%20Schroeder%20House%20Utrecht.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Rietveld%20Schroeder%20House%20First%20Floor%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/gerrit-rietveld.jpg",
+    "buildingImg": "assets/img/buildings/gerrit-rietveld.jpg",
+    "blueprintImg": "assets/img/blueprints/gerrit-rietveld.jpg",
     "blueprintType": "슈뢰더 주택 2층 가변 평면도 (Transformable First Floor Plan)",
     "blueprintDesc": "고정된 벽 없이 슬라이딩 패널을 열면 하나의 거대한 열린 홀이 되고, 닫으면 독립된 3개의 침실로 분할되는 가변 공간.",
     "philosophyKeywords": [
@@ -1009,9 +1009,9 @@ const INITIAL_ARCHITECTS = [
       "walter-gropius"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Marcel%20Breuer%201950.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Whitney%20Museum%20Breuer%20Building%20NYC.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Wassily%20Chair%20patent%20drawing.png?width=800",
+    "portraitImg": "assets/img/portraits/marcel-breuer.jpg",
+    "buildingImg": "assets/img/buildings/marcel-breuer.jpg",
+    "blueprintImg": "assets/img/blueprints/marcel-breuer.jpg",
     "blueprintType": "바실리 체어 강철 파이프 특허 도면 (Patent Drawing)",
     "blueprintDesc": "이음매 없는 크롬 도금 강철 파이프 프레임에 팽팽한 가죽 스트랩만을 걸쳐 공중에 떠 있는 듯한 무중력 안락감을 구현한 도면.",
     "philosophyKeywords": [
@@ -1065,9 +1065,9 @@ const INITIAL_ARCHITECTS = [
       "le-corbusier"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Louis%20Kahn%20portrait.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Salk%20Institute%20Plaza%20La%20Jolla.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Salk%20Institute%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/louis-kahn.jpg",
+    "buildingImg": "assets/img/buildings/louis-kahn.jpg",
+    "blueprintImg": "assets/img/blueprints/louis-kahn.jpg",
     "blueprintType": "솔크 연구소 대칭 마스터플랜 (Master Site Plan)",
     "blueprintDesc": "두 개의 연구동 사이에 단 한 그루의 나무도 심지 않고 태평양 수평선을 향해 물길을 뻗어낸 빈 트래버틴 광장 평면.",
     "philosophyKeywords": [
@@ -1129,9 +1129,9 @@ const INITIAL_ARCHITECTS = [
       "walter-gropius"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Philip%20Johnson%201960.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Glass%20House%20New%20Canaan%20Johnson.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Glass%20House%20Floor%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/philip-johnson.jpg",
+    "buildingImg": "assets/img/buildings/philip-johnson.jpg",
+    "blueprintImg": "assets/img/blueprints/philip-johnson.jpg",
     "blueprintType": "글래스 하우스 단일 평면도 (Single Open Floor Plan)",
     "blueprintDesc": "사방이 투명 유리로 둘러싸인 17m x 10m 직사각형 평면. 유일한 폐쇄 공간인 원통형 벽돌 벽난로/욕실 코어가 지붕을 지탱.",
     "philosophyKeywords": [
@@ -1183,9 +1183,9 @@ const INITIAL_ARCHITECTS = [
       "le-corbusier"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Oscar%20Niemeyer%201977.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Brasilia%20Cathedral%20Niemeyer.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Congresso%20Nacional%20Brasilia%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/oscar-niemeyer.jpg",
+    "buildingImg": "assets/img/buildings/oscar-niemeyer.jpg",
+    "blueprintImg": "assets/img/blueprints/oscar-niemeyer.jpg",
     "blueprintType": "브라질 국회의사당 단지 평면 및 배치도 (National Congress Plan)",
     "blueprintDesc": "상원의 오목한 돔과 하원의 볼록한 접시형 돔, 그리고 그 뒤로 솟아오른 28층 쌍둥이 타워가 완벽한 조각적 대칭을 이루는 배치.",
     "philosophyKeywords": [
@@ -1239,9 +1239,9 @@ const INITIAL_ARCHITECTS = [
       "frank-lloyd-wright"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Eero%20Saarinen%201954.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/TWA%20Flight%20Center%20JFK%20Airport.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Gateway%20Arch%20St%20Louis%20elevation.png?width=800",
+    "portraitImg": "assets/img/portraits/eero-saarinen.jpg",
+    "buildingImg": "assets/img/buildings/eero-saarinen.jpg",
+    "blueprintImg": "assets/img/blueprints/eero-saarinen.jpg",
     "blueprintType": "게이트웨이 아치 역현수선 단면 입면도 (Arch Geometric Elevation)",
     "blueprintDesc": "수학적 역현수선 공식을 바탕으로 내부 삼각 강철 박스 트러스와 외부 스테인리스 스틸을 일체화하여 192m를 자립시킨 단면도.",
     "philosophyKeywords": [
@@ -1295,9 +1295,9 @@ const INITIAL_ARCHITECTS = [
       "le-corbusier"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Kenzo%20Tange%201964.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Yoyogi%20National%20Gymnasium%20Tokyo.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Hiroshima%20Peace%20Memorial%20Museum%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/kenzo-tange.jpg",
+    "buildingImg": "assets/img/buildings/kenzo-tange.jpg",
+    "blueprintImg": "assets/img/blueprints/kenzo-tange.jpg",
     "blueprintType": "히로시마 평화기념자료관 배치 평면도 (Peace Memorial Masterplan)",
     "blueprintDesc": "원폭 돔을 정면으로 응시하는 축선 위에 필로티로 공중에 띄운 수평 매스와 평화의 연못을 배치한 정밀 축선 평면.",
     "philosophyKeywords": [
@@ -1351,9 +1351,9 @@ const INITIAL_ARCHITECTS = [
       "marcel-breuer"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20Rudolph%2C%20drawing%20(1964).jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Yale%20Art%20and%20Architecture%20Building%2C%20October%2020%2C%202008.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Paul%20Rudolph%20-%20Walker%20Guest%20House%20Floorplan.jpg?width=800",
+    "portraitImg": "assets/img/portraits/paul-rudolph.jpg",
+    "buildingImg": "assets/img/buildings/paul-rudolph.jpg",
+    "blueprintImg": "assets/img/blueprints/paul-rudolph.jpg",
     "blueprintType": "워커 게스트하우스 평면도 (Walker Guest House Plan)",
     "blueprintDesc": "플로리다 시절의 정밀한 모듈형 목구조와 도르래로 여닫는 차양 플랩을 체계화한 초기 미니멀 주거 평면.",
     "philosophyKeywords": [
@@ -1407,9 +1407,9 @@ const INITIAL_ARCHITECTS = [
       "ludwig-mies"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Alison%20Smithson.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Robin%20Hood%20Gardens%2C%20London%20(2015).jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Robin%20Hood%20Gardens%20AP%20Smithson.jpg?width=800",
+    "portraitImg": "assets/img/portraits/smithsons.jpg",
+    "buildingImg": "assets/img/buildings/smithsons.jpg",
+    "blueprintImg": "assets/img/blueprints/smithsons.jpg",
     "blueprintType": "로빈 후드 가든 배치 및 공중거리 스케치",
     "blueprintDesc": "중앙 생태 언덕 공원을 둘러싼 두 동의 프리캐스트 콘크리트 주거 블록과 외부 공중 데크 보행로 다이어그램.",
     "philosophyKeywords": [
@@ -1463,9 +1463,9 @@ const INITIAL_ARCHITECTS = [
       "kenzo-tange"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Kim%20Swoo-geun%20architect.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Space%20Group%20Building%20Seoul%202018.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Space%20Group%20Building%20Seoul%20Section.png?width=800",
+    "portraitImg": "assets/img/portraits/kim-swoo-geun.jpg",
+    "buildingImg": "assets/img/buildings/kim-swoo-geun.jpg",
+    "blueprintImg": "assets/img/blueprints/kim-swoo-geun.jpg",
     "blueprintType": "공간사옥 스킵플로어 종단면도 (Skip-floor Longitudinal Section)",
     "blueprintDesc": "인체 스케일에 맞춘 2.2m 층고와 반 층씩 어긋나게 오르내리는 계단, 외부 한옥 마당과의 입체적 시선 교차를 보여주는 단면도.",
     "philosophyKeywords": [
@@ -1515,9 +1515,9 @@ const INITIAL_ARCHITECTS = [
       "le-corbusier"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Kim%20Chung-up%20architect.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/French%20Embassy%20in%20Seoul%202019.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/French%20Embassy%20Seoul%20Pavilion%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/kim-chung-up.jpg",
+    "buildingImg": "assets/img/buildings/kim-chung-up.jpg",
+    "blueprintImg": "assets/img/blueprints/kim-chung-up.jpg",
     "blueprintType": "주한 프랑스 대사관 대사 집무동 평면도",
     "blueprintDesc": "필로티로 공중에 띄운 집무실과, 기둥 밖으로 시원하게 날아오른 처마 콘크리트 캔틸레버의 조형미를 보여주는 평면도.",
     "philosophyKeywords": [
@@ -1567,9 +1567,9 @@ const INITIAL_ARCHITECTS = [
       "kenzo-tange"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/%E9%BB%92%E5%B7%9D%E7%B4%80%E7%AB%A0.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Capsules%20of%20the%20Nakagin%20Capsule%20Tower%20dllu.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin%20floor%20plan.svg?width=800",
+    "portraitImg": "assets/img/portraits/kisho-kurokawa.jpg",
+    "buildingImg": "assets/img/buildings/kisho-kurokawa.jpg",
+    "blueprintImg": "assets/img/blueprints/kisho-kurokawa.jpg",
     "blueprintType": "나카긴 캡슐 타워 기준층 평면도 (Nakagin Typical Floor Plan)",
     "blueprintDesc": "중앙 설비·엘리베이터 콘크리트 코어를 중심으로 4개의 독립 캡슐 유닛이 캔틸레버로 매달린 회전형 평면.",
     "philosophyKeywords": [
@@ -1624,9 +1624,9 @@ const INITIAL_ARCHITECTS = [
       "ludwig-mies"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Robert%20Venturi%202007.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Vanna%20Venturi%20House%20Chestnut%20Hill.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Vanna%20Venturi%20House%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/robert-venturi.jpg",
+    "buildingImg": "assets/img/buildings/robert-venturi.jpg",
+    "blueprintImg": "assets/img/blueprints/robert-venturi.jpg",
     "blueprintType": "바나 벤투리 하우스 1층 평면도 (Ground Floor Plan)",
     "blueprintDesc": "중앙의 거대한 굴뚝과 계단이 서로 밀치며 충돌하는 복합적 대칭 평면. 입구 축선과 실내 동선의 모순적 긴장감을 연출.",
     "philosophyKeywords": [
@@ -1680,9 +1680,9 @@ const INITIAL_ARCHITECTS = [
       "adolf-loos"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/AldoRossi.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Teatro%20del%20mondo%2C%20Aldo%20Rossi.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Teatro%20del%20Mondo.1980.1%2C%20Aldo%20Rossi.jpg?width=800",
+    "portraitImg": "assets/img/portraits/aldo-rossi.jpg",
+    "buildingImg": "assets/img/buildings/aldo-rossi.jpg",
+    "blueprintImg": "assets/img/blueprints/aldo-rossi.jpg",
     "blueprintType": "세계의 극장 수상 부유 구조 입면 스케치",
     "blueprintDesc": "팔각형 원추 돔 지붕을 얹은 순수 목조 타워를 바지선 위에 결합하여 베네치아 바다를 유영하도록 고안한 시적 입면.",
     "philosophyKeywords": [
@@ -1735,9 +1735,9 @@ const INITIAL_ARCHITECTS = [
       "le-corbusier"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/James%20Stirling%2001.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Staatsgalerie1.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Leicester%20University%20Engineering%20Building.jpg?width=800",
+    "portraitImg": "assets/img/portraits/james-stirling.jpg",
+    "buildingImg": "assets/img/buildings/james-stirling.jpg",
+    "blueprintImg": "assets/img/blueprints/james-stirling.jpg",
     "blueprintType": "레스터 대학교 공학부 빌딩 조감도 (Engineering Building Perspective)",
     "blueprintDesc": "유리 톱니 지붕의 단층 실험동과 붉은 벽돌의 수직 타워 및 캔틸레버 계단실이 극적으로 충돌하는 구성주의적 도면.",
     "philosophyKeywords": [
@@ -1788,9 +1788,9 @@ const INITIAL_ARCHITECTS = [
       "ludwig-mies"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Richard%20Meier%20at%20the%202009%20Tribeca%20Film%20Festival.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Los%20angeles%20from%20getty%20panorama.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Section%20of%20Douglas%20House.jpg?width=800",
+    "portraitImg": "assets/img/portraits/richard-meier.jpg",
+    "buildingImg": "assets/img/buildings/richard-meier.jpg",
+    "blueprintImg": "assets/img/blueprints/richard-meier.jpg",
     "blueprintType": "더글러스 하우스 절벽 횡단면도 (Cliff Cross Section)",
     "blueprintDesc": "급경사 호숫가 낭떠러지에 다리로 진입하여 최상층에서 아래로 내려가며 미시간 호수를 파노라마로 조망하는 4층 입체 단면도.",
     "philosophyKeywords": [
@@ -1844,9 +1844,9 @@ const INITIAL_ARCHITECTS = [
       "giuseppe-terragni"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Peter%20Eisenman%20(cropped).jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Memorial%20to%20the%20Murdered%20Jews%20of%20Europe%20-%20underground.JPG?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/House%20VI%20024.JPG?width=800",
+    "portraitImg": "assets/img/portraits/peter-eisenman.jpg",
+    "buildingImg": "assets/img/buildings/peter-eisenman.jpg",
+    "blueprintImg": "assets/img/blueprints/peter-eisenman.jpg",
     "blueprintType": "하우스 VI 축적 엑소노메트릭 모형 및 다이어그램",
     "blueprintDesc": "식탁 한가운데에 내려앉은 기둥, 바닥에 뚫린 슬릿 등 주거 기능을 철저히 전복하고 3차원 그리드의 자율적 유희를 보여주는 도면.",
     "philosophyKeywords": [
@@ -1900,9 +1900,9 @@ const INITIAL_ARCHITECTS = [
       "le-corbusier"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Frank%20Gehry%202013.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Guggenheim%20Museum%20Bilbao%20Gehry.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Walt%20Disney%20Concert%20Hall%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/frank-gehry.jpg",
+    "buildingImg": "assets/img/buildings/frank-gehry.jpg",
+    "blueprintImg": "assets/img/blueprints/frank-gehry.jpg",
     "blueprintType": "월트 디즈니 콘서트홀 평면도 (Concert Hall Plan)",
     "blueprintDesc": "외부의 휘날리는 스테인리스 곡면 돛 안에 세계 최고의 어쿠스틱 음향을 자랑하는 빈야드(포도밭)형 오케스트라 홀을 안치한 평면도.",
     "philosophyKeywords": [
@@ -1958,9 +1958,9 @@ const INITIAL_ARCHITECTS = [
       "smithsons"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Rem%20Koolhaas%202008.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/CCTV%20Headquarters%20Beijing%20Koolhaas.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Maison%20a%20Bordeaux%20Koolhaas%20section.png?width=800",
+    "portraitImg": "assets/img/portraits/rem-koolhaas.jpg",
+    "buildingImg": "assets/img/buildings/rem-koolhaas.jpg",
+    "blueprintImg": "assets/img/blueprints/rem-koolhaas.jpg",
     "blueprintType": "보르도 주택 3층 수직 엘리베이터 단면도 (Maison à Bordeaux Section)",
     "blueprintDesc": "교통사고로 하반신이 마비된 건축주를 위해 3m x 3.5m 크기의 통유리 엘리베이터 서재가 3개 층을 오르내리며 바닥판을 완성하는 마술적 단면.",
     "philosophyKeywords": [
@@ -2012,9 +2012,9 @@ const INITIAL_ARCHITECTS = [
       "erich-mendelsohn"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Zaha%20Hadid%202013.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Dongdaemun%20Design%20Plaza%20DDP%20Seoul.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Vitra%20Fire%20Station%20Zaha%20plan.png?width=800",
+    "portraitImg": "assets/img/portraits/zaha-hadid.jpg",
+    "buildingImg": "assets/img/buildings/zaha-hadid.jpg",
+    "blueprintImg": "assets/img/blueprints/zaha-hadid.jpg",
     "blueprintType": "비트라 소방서 엑소노메트릭 평면 (Vitra Fire Station Plan)",
     "blueprintDesc": "날카롭게 교차하는 콘크리트 사선 벽체들이 소방차의 긴급 출동 속도감을 건축적 폭발로 시각화한 해체주의 초기 걸작 도면.",
     "philosophyKeywords": [
@@ -2064,9 +2064,9 @@ const INITIAL_ARCHITECTS = [
       "peter-eisenman"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Daniel%20Libeskind%202011%20(cropped).jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Jewish%20Museum%20Berlin.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Model%20of%20J%C3%BCdisches%20Museum%20Berlin%20(Jewish%20Museum%20Berlin).jpg?width=800",
+    "portraitImg": "assets/img/portraits/daniel-libeskind.jpg",
+    "buildingImg": "assets/img/buildings/daniel-libeskind.jpg",
+    "blueprintImg": "assets/img/blueprints/daniel-libeskind.jpg",
     "blueprintType": "베를린 유대인 박물관 지그재그 '선의 사이' 모형 및 평면",
     "blueprintDesc": "다윗의 별을 해체한 지그재그 선과 건물을 가로지르는 텅 빈 콘크리트 빈 공간(Void)의 교차를 보여주는 개념 모형.",
     "philosophyKeywords": [
@@ -2117,9 +2117,9 @@ const INITIAL_ARCHITECTS = [
       "adolf-loos"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Bernard%20Tschumi%20at%20GSAPP.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Pavillon%20Janvier%20Paris%202.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Plan%20of%20the%20Parc%20de%20la%20Villette%20with%20follies%20-%20OSM%202016.svg?width=800",
+    "portraitImg": "assets/img/portraits/bernard-tschumi.jpg",
+    "buildingImg": "assets/img/buildings/bernard-tschumi.jpg",
+    "blueprintImg": "assets/img/blueprints/bernard-tschumi.jpg",
     "blueprintType": "라 빌레트 공원 점·선·면 슈퍼임포지션 마스터플랜",
     "blueprintDesc": "점(120m 간격 빨간 폴리들), 선(구불구불한 테마 산책로), 면(초록 잔디광장)이라는 3개의 자율적 체계가 겹쳐진 다이어그램 평면.",
     "philosophyKeywords": [
@@ -2171,9 +2171,9 @@ const INITIAL_ARCHITECTS = [
       "louis-kahn"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Tadao%20Ando%202009.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Church%20of%20the%20Light%20Osaka%20Ando.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Church%20of%20the%20Light%20Plan.png?width=800",
+    "portraitImg": "assets/img/portraits/tadao-ando.jpg",
+    "buildingImg": "assets/img/buildings/tadao-ando.jpg",
+    "blueprintImg": "assets/img/blueprints/tadao-ando.jpg",
     "blueprintType": "빛의 교회 평면도 (Church of the Light Plan)",
     "blueprintDesc": "완벽한 정육면체 콘크리트 상자를 15도 각도의 자립형 사선 벽체가 가로지르며 제단 뒤 십자가 틈새로 빛을 유도하는 기하학 평면.",
     "philosophyKeywords": [
@@ -2232,9 +2232,9 @@ const INITIAL_ARCHITECTS = [
       "alvar-aalto"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Siza%20Vieira%20na%20Exponor.JPG?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Museo%20Serralves.%20(6086057211).jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Casa%20de%20ch%C3%A1%20da%20Boa%20Nova.jpg?width=800",
+    "portraitImg": "assets/img/portraits/alvaro-siza.jpg",
+    "buildingImg": "assets/img/buildings/alvaro-siza.jpg",
+    "blueprintImg": "assets/img/blueprints/alvaro-siza.jpg",
     "blueprintType": "보아 노바 티하우스 대서양 암반 배치도",
     "blueprintDesc": "대서양 파도가 부딪히는 거친 암반 지형을 조금도 훼손하지 않고 바위 틈새에 지붕을 낮게 얹은 자연 합일의 배치도.",
     "philosophyKeywords": [
@@ -2288,9 +2288,9 @@ const INITIAL_ARCHITECTS = [
       "eero-saarinen"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Norman%20Foster%202014.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/30%20St%20Mary%20Axe%20Gherkin%20London.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Reichstag%20Dome%20Berlin%20section.png?width=800",
+    "portraitImg": "assets/img/portraits/norman-foster.jpg",
+    "buildingImg": "assets/img/buildings/norman-foster.jpg",
+    "blueprintImg": "assets/img/blueprints/norman-foster.jpg",
     "blueprintType": "베를린 국회의사당 유리 돔 자연환기 단면도 (Reichstag Dome Section)",
     "blueprintDesc": "하부 국회 본회의장에 태양광을 반사해 내리는 원뿔형 거울 콘(Light Cone)과 뜨거운 공기를 배출하는 이중 나선형 램프 단면도.",
     "philosophyKeywords": [
@@ -2346,9 +2346,9 @@ const INITIAL_ARCHITECTS = [
       "louis-kahn"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Renzo%20Piano%202015.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Shard%20London%20Renzo%20Piano.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Tjibaou%20Cultural%20Centre%20section.png?width=800",
+    "portraitImg": "assets/img/portraits/renzo-piano.jpg",
+    "buildingImg": "assets/img/buildings/renzo-piano.jpg",
+    "blueprintImg": "assets/img/blueprints/renzo-piano.jpg",
     "blueprintType": "티바우 문화센터 카낙 오두막 파시브 환기 단면도",
     "blueprintDesc": "뉴칼레도니아 카낙 족의 전통 가옥 형태를 얇은 이로코 목재 갈비뼈로 재해석하여 남태평양 산들바람을 실내로 유입시키는 단면도.",
     "philosophyKeywords": [
@@ -2400,9 +2400,9 @@ const INITIAL_ARCHITECTS = [
       "smithsons"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Richard%20Rogers%20(2013)%20(cropped).jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Lloyd's%20Building%20-%20Escalators%20fisheye.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Lloyd's%20Facade.jpg?width=800",
+    "portraitImg": "assets/img/portraits/richard-rogers.jpg",
+    "buildingImg": "assets/img/buildings/richard-rogers.jpg",
+    "blueprintImg": "assets/img/blueprints/richard-rogers.jpg",
     "blueprintType": "로이즈 빌딩 외부 설비 타워 입면 (External Service Towers Façade)",
     "blueprintDesc": "6개의 수직 설비 타워에 화물 엘리베이터, 배관, 스테인리스 화장실 포드를 완전히 빼내어 중앙 보험 거래 홀을 텅 비운 입면도.",
     "philosophyKeywords": [
@@ -2454,9 +2454,9 @@ const INITIAL_ARCHITECTS = [
       "josef-beuys"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/31._ISC-Symposium-Pierre_de_Meuron-HSGN_028-01578.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Elbphilharmonie%20Hamburg.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Beijing%20national%20stadium.jpg?width=800",
+    "portraitImg": "assets/img/portraits/herzog-de-meuron.jpg",
+    "buildingImg": "assets/img/buildings/herzog-de-meuron.jpg",
+    "blueprintImg": "assets/img/blueprints/herzog-de-meuron.jpg",
     "blueprintType": "베이징 국립경기장(새둥지) 강철 트러스 구조 조감도",
     "blueprintDesc": "24개의 메인 트러스 기둥이 무작위로 얽히고설켜 지진에 완벽히 견디며 거대한 새둥지 조각을 이룬 구조 도면.",
     "philosophyKeywords": [
@@ -2508,9 +2508,9 @@ const INITIAL_ARCHITECTS = [
       "kenzo-tange"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Toyo%20Ito%202009.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Sendai%20Mediatheque%202009.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Tama_Art_University_(Hachioji_Library).jpg?width=800",
+    "portraitImg": "assets/img/portraits/toyo-ito.jpg",
+    "buildingImg": "assets/img/buildings/toyo-ito.jpg",
+    "blueprintImg": "assets/img/blueprints/toyo-ito.jpg",
     "blueprintType": "타마미술대학교 도서관 교차 아치 공간 구조",
     "blueprintDesc": "완만한 언덕 지형을 따라 얇은 철골 콘크리트 아치들이 임의의 곡선으로 교차하며 숲속 동굴 같은 무한한 연속 시야를 제공하는 도면.",
     "philosophyKeywords": [
@@ -2564,9 +2564,9 @@ const INITIAL_ARCHITECTS = [
       "ludwig-mies"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Kazuyo_Sejima_mg_5000.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/21st%20Century%20Museum%20of%20Contemporary%20Art%2C%20Kanazawa011.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/21st%20Century%20Museum%20of%20Contemporary%20Art%2C%20Kanazawa%2012.jpg?width=800",
+    "portraitImg": "assets/img/portraits/sanaa.jpg",
+    "buildingImg": "assets/img/buildings/sanaa.jpg",
+    "blueprintImg": "assets/img/blueprints/sanaa.jpg",
     "blueprintType": "21세기 가나자와 미술관 원형 마스터 평면도",
     "blueprintDesc": "지름 112.5m의 거대한 원형 유리 외피 안에 사각형 갤러리와 중정들이 공원의 벤치처럼 무위계적으로 떠 있는 평면도.",
     "philosophyKeywords": [
@@ -2617,9 +2617,9 @@ const INITIAL_ARCHITECTS = [
       "kenzo-tange"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Kengo%20Kuma%202009.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/New%20national%20stadium%20tokyo%201.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Asakusa%20Culture%20Tourist%20Information%20Center%2021%2009%202024%20Picture%2006.jpg?width=800",
+    "portraitImg": "assets/img/portraits/kengo-kuma.jpg",
+    "buildingImg": "assets/img/buildings/kengo-kuma.jpg",
+    "blueprintImg": "assets/img/blueprints/kengo-kuma.jpg",
     "blueprintType": "아사쿠사 문화관광센터 적층 주택 지붕 단면 조형",
     "blueprintDesc": "전통 박공지붕 단독주택 8채를 수직으로 포개어 올린 듯한 단면 구조로 각 층 사이의 틈새로 바람과 전망을 확보한 도면.",
     "philosophyKeywords": [
@@ -2670,9 +2670,9 @@ const INITIAL_ARCHITECTS = [
       "norman-foster"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/David%20Chipperfield%20(cropped).jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin%20-%20Neues%20Museum%20(1).jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin%20James-Simon-Galerie%20asv2019-07%20img2.jpg?width=800",
+    "portraitImg": "assets/img/portraits/david-chipperfield.jpg",
+    "buildingImg": "assets/img/buildings/david-chipperfield.jpg",
+    "blueprintImg": "assets/img/blueprints/david-chipperfield.jpg",
     "blueprintType": "제임스 사이먼 갤러리 열주랑 및 박물관 섬 배치",
     "blueprintDesc": "베를린 박물관 섬의 신고전주의 열주랑(Colonnade)을 극도로 가느다란 백색 프리캐스트 콘크리트 기둥으로 재해석한 입구 파빌리온.",
     "philosophyKeywords": [
@@ -2723,9 +2723,9 @@ const INITIAL_ARCHITECTS = [
       "rem-koolhaas"
     ],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Bjarke_Ingels_in_Frankfurt.20150617.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Amager%20Bakke%20Copenhagen%201.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen%20Park%2C%20Copenhagen%20(39688100743).jpg?width=800",
+    "portraitImg": "assets/img/portraits/bjarke-ingels.jpg",
+    "buildingImg": "assets/img/buildings/bjarke-ingels.jpg",
+    "blueprintImg": "assets/img/blueprints/bjarke-ingels.jpg",
     "blueprintType": "수퍼킬렌 다문화 공원 마스터플랜 및 라인 패턴",
     "blueprintDesc": "전 세계 60여 개국의 벤치, 가로등, 그네를 수집하고 지형 위에 역동적인 흰색 등고선 라인을 그려낸 도시재생 평면.",
     "philosophyKeywords": [
@@ -2773,9 +2773,9 @@ const INITIAL_ARCHITECTS = [
     "influences": [],
     "influencedBy": [],
     "customNotes": "",
-    "portraitImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Francis_Kere%2C_2019.jpg?width=600",
-    "buildingImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Primary%20School%20Gando.jpg?width=800",
-    "blueprintImg": "https://commons.wikimedia.org/wiki/Special:FilePath/Serpentine%20Pavilion%202017%20I%20(35866153461).jpg?width=800",
+    "portraitImg": "assets/img/portraits/diebedo-francis-kere.jpg",
+    "buildingImg": "assets/img/buildings/diebedo-francis-kere.jpg",
+    "blueprintImg": "assets/img/blueprints/diebedo-francis-kere.jpg",
     "blueprintType": "2017 서펜타인 파빌리온 나무 캐노피 구조",
     "blueprintDesc": "아프리카 마을의 거대한 만남의 나무(Tree of Life)를 모티브로 빗물을 깔때기처럼 모으고 바람을 통과시키는 목재 파빌리온 구조.",
     "philosophyKeywords": [
@@ -3094,13 +3094,23 @@ const INFLUENCE_EDGES = [
   }
 ];
 
+// Browser window exposure
 if (typeof window !== 'undefined') {
   window.ERAS = ERAS;
   window.INITIAL_ARCHITECTS = INITIAL_ARCHITECTS;
   window.INFLUENCE_EDGES = INFLUENCE_EDGES;
-  window.ARCHI_DATA = { ERAS, INITIAL_ARCHITECTS, INFLUENCE_EDGES };
+  window.ARCHI_DATA = {
+    eras: ERAS,
+    architects: INITIAL_ARCHITECTS,
+    edges: INFLUENCE_EDGES
+  };
 }
 
+// Node.js module export compatibility
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { ERAS, INITIAL_ARCHITECTS, INFLUENCE_EDGES };
+  module.exports = {
+    ERAS,
+    INITIAL_ARCHITECTS,
+    INFLUENCE_EDGES
+  };
 }

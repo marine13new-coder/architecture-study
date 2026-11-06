@@ -110,14 +110,14 @@ class ArchiCards {
                          alt="${arch.masterpiece}" 
                          class="card-banner-bg" 
                          loading="lazy" 
-                         onerror="this.style.opacity='0.2';">
+                         onerror="this.onerror=null; this.src='assets/img/buildings/${arch.id}.jpg';">
                     <div class="card-banner-overlay"></div>
                     
                     <div class="card-portrait-badge">
                       <img src="${portrait}" 
                            alt="${arch.nameKo}" 
                            loading="lazy" 
-                           onerror="this.style.display='none';">
+                           onerror="this.onerror=null; this.src='assets/img/portraits/${arch.id}.jpg';">
                     </div>
 
                     ${masterBadge ? `

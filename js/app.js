@@ -51,17 +51,19 @@ class ArchiApp {
   }
 
   // ========================================================
-  // DATA MANAGEMENT & LOCALSTORAGE (v2 검증된 학술 데이터베이스)
+  // DATA MANAGEMENT & LOCALSTORAGE (v3 100% 로컬 검증 에셋 아카이브)
   // ========================================================
   loadData() {
-    const DATA_VERSION = 'archi_architects_v2';
-    const EDGES_VERSION = 'archi_edges_v2';
+    const DATA_VERSION = 'archi_architects_v3';
+    const EDGES_VERSION = 'archi_edges_v3';
 
-    // 이전 v1의 사용자 작성 커스텀 메모 보존 및 마이그레이션
+    // 이전 v1, v2의 사용자 작성 커스텀 메모 보존 및 마이그레이션
     const oldNotes = {};
     try {
+      const v2 = JSON.parse(localStorage.getItem('archi_architects_v2') || '[]');
+      v2.forEach(a => { if (a.customNotes) oldNotes[a.id] = a.customNotes; });
       const v1 = JSON.parse(localStorage.getItem('archi_architects_v1') || '[]');
-      v1.forEach(a => { if (a.customNotes) oldNotes[a.id] = a.customNotes; });
+      v1.forEach(a => { if (a.customNotes && !oldNotes[a.id]) oldNotes[a.id] = a.customNotes; });
     } catch(e) {}
 
     const savedArchitects = localStorage.getItem(DATA_VERSION);
@@ -96,8 +98,8 @@ class ArchiApp {
   }
 
   saveData() {
-    localStorage.setItem('archi_architects_v2', JSON.stringify(this.architects));
-    localStorage.setItem('archi_edges_v2', JSON.stringify(this.edges));
+    localStorage.setItem('archi_architects_v3', JSON.stringify(this.architects));
+    localStorage.setItem('archi_edges_v3', JSON.stringify(this.edges));
     if (this.study) this.study.updateData(this.architects);
     this.updateDataViews();
   }
@@ -108,6 +110,8 @@ class ArchiApp {
       localStorage.removeItem('archi_edges_v1');
       localStorage.removeItem('archi_architects_v2');
       localStorage.removeItem('archi_edges_v2');
+      localStorage.removeItem('archi_architects_v3');
+      localStorage.removeItem('archi_edges_v3');
       this.architects = [...(window.INITIAL_ARCHITECTS || [])];
       this.edges = [...(window.INFLUENCE_EDGES || [])];
       this.updateDataViews();
