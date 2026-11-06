@@ -51,17 +51,23 @@ class ArchiApp {
   }
 
   // ========================================================
-  // DATA MANAGEMENT & LOCALSTORAGE (v3 100% 로컬 검증 에셋 아카이브)
+  // DATA MANAGEMENT & LOCALSTORAGE (v4 학술 데이터베이스 & 지리·프리츠커 강화)
   // ========================================================
   loadData() {
-    const DATA_VERSION = 'archi_architects_v3';
-    const EDGES_VERSION = 'archi_edges_v3';
+    const DATA_VERSION = 'archi_architects_v4';
+    const EDGES_VERSION = 'archi_edges_v4';
 
-    // 이전 v1, v2의 사용자 작성 커스텀 메모 보존 및 마이그레이션
+    // 이전 v1, v2, v3의 사용자 작성 커스텀 메모 보존 및 마이그레이션
     const oldNotes = {};
+    const oldFavorites = new Set();
     try {
+      const v3 = JSON.parse(localStorage.getItem('archi_architects_v3') || '[]');
+      v3.forEach(a => { 
+        if (a.customNotes) oldNotes[a.id] = a.customNotes; 
+        if (a.isFavorite) oldFavorites.add(a.id);
+      });
       const v2 = JSON.parse(localStorage.getItem('archi_architects_v2') || '[]');
-      v2.forEach(a => { if (a.customNotes) oldNotes[a.id] = a.customNotes; });
+      v2.forEach(a => { if (a.customNotes && !oldNotes[a.id]) oldNotes[a.id] = a.customNotes; });
       const v1 = JSON.parse(localStorage.getItem('archi_architects_v1') || '[]');
       v1.forEach(a => { if (a.customNotes && !oldNotes[a.id]) oldNotes[a.id] = a.customNotes; });
     } catch(e) {}
@@ -79,6 +85,7 @@ class ArchiApp {
     } else {
       this.architects = (window.INITIAL_ARCHITECTS || []).map(a => {
         if (oldNotes[a.id]) a.customNotes = oldNotes[a.id];
+        if (oldFavorites.has(a.id)) a.isFavorite = true;
         return a;
       });
       this.saveData();
@@ -98,8 +105,8 @@ class ArchiApp {
   }
 
   saveData() {
-    localStorage.setItem('archi_architects_v3', JSON.stringify(this.architects));
-    localStorage.setItem('archi_edges_v3', JSON.stringify(this.edges));
+    localStorage.setItem('archi_architects_v4', JSON.stringify(this.architects));
+    localStorage.setItem('archi_edges_v4', JSON.stringify(this.edges));
     if (this.study) this.study.updateData(this.architects);
     this.updateDataViews();
   }
@@ -112,6 +119,8 @@ class ArchiApp {
       localStorage.removeItem('archi_edges_v2');
       localStorage.removeItem('archi_architects_v3');
       localStorage.removeItem('archi_edges_v3');
+      localStorage.removeItem('archi_architects_v4');
+      localStorage.removeItem('archi_edges_v4');
       this.architects = [...(window.INITIAL_ARCHITECTS || [])];
       this.edges = [...(window.INFLUENCE_EDGES || [])];
       this.updateDataViews();
@@ -148,6 +157,20 @@ class ArchiApp {
     // 4. Blueprints & Gallery View
     if (window.ArchiGallery) {
       this.gallery = new ArchiGallery('view-gallery', {
+        onSelectArchitect: (arch) => this.openDetailDrawer(arch)
+      });
+    }
+
+    // 5. World Architecture Atlas View
+    if (window.ArchiAtlas) {
+      this.atlas = new ArchiAtlas('view-atlas', {
+        onSelectArchitect: (arch) => this.openDetailDrawer(arch)
+      });
+    }
+
+    // 6. 3D Spaced Repetition Exam Flashcards
+    if (window.ArchiFlashcards) {
+      this.flashcards = new ArchiFlashcards('view-flashcards', {
         onSelectArchitect: (arch) => this.openDetailDrawer(arch)
       });
     }
@@ -204,6 +227,18 @@ class ArchiApp {
       }, 50);
     }
 
+    if (viewName === 'atlas' && this.atlas) {
+      setTimeout(() => {
+        this.atlas.render();
+      }, 50);
+    }
+
+    if (viewName === 'flashcards' && this.flashcards) {
+      setTimeout(() => {
+        this.flashcards.render();
+      }, 50);
+    }
+
     this.refreshIcons();
   }
 
@@ -212,6 +247,8 @@ class ArchiApp {
     if (this.timeline) this.timeline.setData(this.architects, this.edges, this.eras);
     if (this.cards) this.cards.setData(this.architects, this.edges, this.eras);
     if (this.gallery) this.gallery.setData(this.architects, this.edges, this.eras);
+    if (this.atlas) this.atlas.setData(this.architects, this.edges, this.eras);
+    if (this.flashcards) this.flashcards.setData(this.architects, this.edges, this.eras);
     this.refreshIcons();
   }
 
@@ -263,11 +300,58 @@ class ArchiApp {
         if (this.gallery) this.gallery.setSearchQuery(q);
       });
     }
+
+    // Favorite & Pritzker Quick Filters
+    this.onlyFavorites = false;
+    this.onlyPritzker = false;
+
+    const btnFav = document.getElementById('btn-filter-favorites');
+    const btnPritzker = document.getElementById('btn-filter-pritzker');
+
+    const updateExtraFilters = () => {
+      if (this.cards && this.cards.setExtraFilters) {
+        this.cards.setExtraFilters(this.onlyFavorites, this.onlyPritzker);
+      }
+      if (this.gallery && this.gallery.setExtraFilters) {
+        this.gallery.setExtraFilters(this.onlyFavorites, this.onlyPritzker);
+      }
+    };
+
+    if (btnFav) {
+      btnFav.addEventListener('click', () => {
+        this.onlyFavorites = !this.onlyFavorites;
+        btnFav.classList.toggle('active', this.onlyFavorites);
+        updateExtraFilters();
+      });
+    }
+
+    if (btnPritzker) {
+      btnPritzker.addEventListener('click', () => {
+        this.onlyPritzker = !this.onlyPritzker;
+        btnPritzker.classList.toggle('active', this.onlyPritzker);
+        updateExtraFilters();
+      });
+    }
   }
 
   // ========================================================
   // DETAIL DRAWER & NOTES
   // ========================================================
+
+  toggleFavorite(architectId) {
+    const arch = this.architects.find(a => a.id === architectId);
+    if (!arch) return;
+    arch.isFavorite = !arch.isFavorite;
+    this.saveData();
+
+    const starBtn = document.getElementById('btn-drawer-favorite');
+    if (starBtn && this.selectedArchitect && this.selectedArchitect.id === architectId) {
+      starBtn.classList.toggle('active', !!arch.isFavorite);
+    }
+
+    this.showToast(arch.isFavorite ? "★ '" + arch.nameKo + "' 즐겨찾기에 등록되었습니다." : "☆ '" + arch.nameKo + "' 즐겨찾기에서 해제되었습니다.");
+  }
+
   setupDrawer() {
     this.drawer = document.getElementById('detail-drawer');
     const closeBtn = document.getElementById('btn-close-drawer');
@@ -330,6 +414,30 @@ class ArchiApp {
         if (!this.selectedArchitect) return;
         this.switchView('graph');
         if (this.graph) this.graph.focusArchitect(this.selectedArchitect.id);
+      });
+    }
+
+    // Favorite Button in Drawer
+    const btnDrawerFav = document.getElementById('btn-drawer-favorite');
+    if (btnDrawerFav) {
+      btnDrawerFav.addEventListener('click', () => {
+        if (!this.selectedArchitect) return;
+        this.toggleFavorite(this.selectedArchitect.id);
+      });
+    }
+
+    // Jump to Atlas from Drawer
+    const btnJumpAtlas = document.getElementById('btn-jump-atlas-city');
+    if (btnJumpAtlas) {
+      btnJumpAtlas.addEventListener('click', () => {
+        if (!this.selectedArchitect || !this.selectedArchitect.geo) return;
+        this.switchView('atlas');
+        if (this.atlas) {
+          this.atlas.selectedCity = this.selectedArchitect.geo.city;
+          this.atlas.render();
+          const targetCard = document.querySelector('.atlas-city-card[data-city="' + this.selectedArchitect.geo.city + '"]');
+          if (targetCard) targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       });
     }
   }
@@ -502,6 +610,81 @@ class ArchiApp {
     const notesText = document.getElementById('study-notes-text');
     notesText.value = architect.customNotes || "";
     document.getElementById('notes-save-status').textContent = "";
+
+    // 1. Star state
+    const drawerStar = document.getElementById('btn-drawer-favorite');
+    if (drawerStar) drawerStar.classList.toggle('active', !!architect.isFavorite);
+
+    // 2. Pritzker Badge & Citation Box
+    const pritzkerPill = document.getElementById('drawer-pritzker-pill');
+    const pritzkerBox = document.getElementById('drawer-pritzker-box');
+    const pritzkerLabel = document.getElementById('drawer-pritzker-year-label');
+    const pritzkerCitation = document.getElementById('drawer-pritzker-citation');
+    const pritzkerHonors = document.getElementById('drawer-pritzker-honors');
+
+    if (architect.pritzker) {
+      if (pritzkerPill) {
+        pritzkerPill.style.display = 'inline-flex';
+        pritzkerPill.textContent = "🏆 " + architect.pritzker.year + " 프리츠커상";
+      }
+      if (pritzkerBox) {
+        pritzkerBox.style.display = 'block';
+        if (pritzkerLabel) pritzkerLabel.textContent = architect.pritzker.year + "년 프리츠커 건축상 심사위원 공식 헌사";
+        if (pritzkerCitation) pritzkerCitation.textContent = '"' + architect.pritzker.citation + '"';
+        if (pritzkerHonors) {
+          const honorsList = architect.honors || [];
+          pritzkerHonors.innerHTML = honorsList.map(h => '<span class="pritzker-honor-tag">🎖️ ' + h + '</span>').join('');
+        }
+      }
+    } else {
+      if (pritzkerPill) pritzkerPill.style.display = 'none';
+      if (pritzkerBox) pritzkerBox.style.display = 'none';
+    }
+
+    // 3. Geo location box
+    const geo = architect.geo || { city: architect.country, country: architect.country, region: '글로벌', lat: 0, lng: 0 };
+    const geoCity = document.getElementById('drawer-geo-city');
+    const geoRegion = document.getElementById('drawer-geo-region');
+    if (geoCity) geoCity.textContent = geo.city + ", " + geo.country;
+    if (geoRegion) geoRegion.textContent = "(" + geo.region + " · " + (geo.lat > 0 ? geo.lat + "°N" : Math.abs(geo.lat) + "°S") + ", " + (geo.lng > 0 ? geo.lng + "°E" : Math.abs(geo.lng) + "°W") + ")";
+
+    // 4. Tectonic materials
+    const tectonicsEl = document.getElementById('drawer-tectonics-pills');
+    if (tectonicsEl) {
+      const mats = architect.tectonicMaterials || ['철근 콘크리트', '강철', '유리'];
+      tectonicsEl.innerHTML = mats.map(m => '<span class="tectonic-pill">🧱 ' + m + '</span>').join('');
+    }
+
+    // 5. Spatial Principles
+    const spatialEl = document.getElementById('drawer-spatial-desc');
+    if (spatialEl) {
+      spatialEl.textContent = architect.spatialPrinciples || "고유의 공간 구법과 비례 체계를 적용했습니다.";
+    }
+
+    // 6. Major Publications & Books
+    const booksEl = document.getElementById('drawer-books-list');
+    if (booksEl) {
+      const books = architect.majorBooks || [];
+      if (books.length === 0) {
+        booksEl.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-muted);">등록된 주요 저서 정보 없음</span>';
+      } else {
+        booksEl.innerHTML = books.map(b => 
+          '<div class="drawer-book-card">' +
+            '<div class="book-card-header">' +
+              '<span class="book-title">📖 《' + b.title + '》</span>' +
+              '<span class="book-year">' + (b.year ? b.year + '년' : '') + '</span>' +
+            '</div>' +
+            '<p class="book-desc">' + (b.desc || '') + '</p>' +
+          '</div>'
+        ).join('');
+      }
+    }
+
+    // 7. Unbuilt Vision
+    const unbuiltEl = document.getElementById('drawer-unbuilt-text');
+    if (unbuiltEl) {
+      unbuiltEl.textContent = architect.unbuiltVision || "시대를 앞서간 혁신적인 구상과 이념적 프로젝트를 남겼습니다.";
+    }
 
     drawer.querySelectorAll('.jump-architect-btn').forEach(btn => {
       btn.addEventListener('click', () => {

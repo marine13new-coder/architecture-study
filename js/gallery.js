@@ -11,7 +11,9 @@ class ArchiGallery {
     this.eras = [];
     this.activeEraId = null;
     this.searchQuery = "";
-    this.mediaType = "all"; // 'all' | 'blueprint' | 'building' | 'portrait'
+    this.mediaType = "all";
+    this.onlyFavorites = false;
+    this.onlyPritzker = false;
   }
 
   setData(architects, edges, eras) {
@@ -36,6 +38,12 @@ class ArchiGallery {
     this.render();
   }
 
+  setExtraFilters(onlyFav, onlyPritzker) {
+    this.onlyFavorites = !!onlyFav;
+    this.onlyPritzker = !!onlyPritzker;
+    this.render();
+  }
+
   render() {
     if (!this.container) return;
 
@@ -44,6 +52,12 @@ class ArchiGallery {
 
     let filtered = this.architects.filter(a => {
       if (this.activeEraId && this.activeEraId !== "all" && a.eraId !== this.activeEraId) {
+        return false;
+      }
+      if (this.onlyFavorites && !a.isFavorite) {
+        return false;
+      }
+      if (this.onlyPritzker && !a.pritzker) {
         return false;
       }
       if (this.searchQuery) {

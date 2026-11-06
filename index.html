@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+KR:wght@400;600;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=20261106_1">
+  <link rel="stylesheet" href="css/style.css?v=20261106_2">
 
   <!-- Core Libraries (로컬 오프라인 라이브러리) -->
   <script src="js/d3.v7.min.js"></script>
@@ -50,6 +50,14 @@
         <i data-lucide="image"></i>
         <span>도면 & 명작 갤러리</span>
       </button>
+      <button class="tab-btn" data-view="atlas" id="tab-btn-atlas" title="세계 건축 지리 아틀라스 & 도시별 랜드마크">
+        <i data-lucide="globe"></i>
+        <span>건축 세계지도</span>
+      </button>
+      <button class="tab-btn" data-view="flashcards" id="tab-btn-flashcards" title="3D 암기 플래시카드 & 자격 시험 스튜디오">
+        <i data-lucide="layers"></i>
+        <span>암기 플래시카드</span>
+      </button>
     </nav>
 
     <!-- Dedicated Study Navigation Group -->
@@ -61,6 +69,10 @@
       <button class="btn btn-study" id="btn-open-comparator" title="건축가 1:1 맞비교 분석">
         <i data-lucide="git-compare"></i>
         <span>1:1 비교</span>
+      </button>
+      <button class="btn btn-study" id="btn-open-principles" title="근대 5원칙, 돔이노, 유니버설 스페이스 인터랙티브 도해">
+        <i data-lucide="box"></i>
+        <span>구조·원리 스튜디오</span>
       </button>
       <button class="btn btn-study" id="btn-open-movements-guide" title="근현대 건축 사조 & 매니페스토 총정리">
         <i data-lucide="book-open"></i>
@@ -104,9 +116,23 @@
       <!-- JavaScript로 시대별 칩 동적 렌더링 -->
     </div>
 
+    <div class="subbar-extra-filters">
+      <button class="subbar-filter-btn" id="btn-filter-favorites" title="즐겨찾기한 건축가만 필터링">
+        <i data-lucide="star"></i>
+        <span>즐겨찾기</span>
+      </button>
+      <button class="subbar-filter-btn" id="btn-filter-pritzker" title="프리츠커 건축상 수상자만 필터링">
+        <i data-lucide="award"></i>
+        <span>프리츠커</span>
+      </button>
+    </div>
+
     <div class="search-box">
       <i data-lucide="search"></i>
       <input type="text" id="search-input" placeholder="건축가, 사조, 대표작, 키워드 검색...">
+      <button class="spotlight-quick-trigger" id="btn-open-spotlight" title="전체 통합 검색 (Ctrl + K)">
+        <kbd>Ctrl K</kbd>
+      </button>
     </div>
   </div>
 
@@ -174,6 +200,16 @@
     <section class="view-container" id="view-gallery">
       <!-- JavaScript로 도면 및 명작 사진 갤러리 동적 렌더링 -->
     </section>
+
+    <!-- VIEW 5: 세계 건축 아틀라스 (World Architecture Atlas) -->
+    <section class="view-container" id="view-atlas">
+      <!-- JavaScript로 세계 지도 및 도시별 클러스터 동적 렌더링 -->
+    </section>
+
+    <!-- VIEW 6: 3D 플래시카드 스튜디오 (SRS Flashcards) -->
+    <section class="view-container" id="view-flashcards">
+      <!-- JavaScript로 3D 플립 카드 동적 렌더링 -->
+    </section>
   </main>
 
   <!-- ==========================================
@@ -182,13 +218,21 @@
   <aside class="detail-drawer" id="detail-drawer">
     <div class="drawer-header">
       <div class="drawer-title-area">
-        <span class="drawer-era-badge" id="drawer-era-badge">시대</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="drawer-era-badge" id="drawer-era-badge">시대</span>
+          <span class="drawer-pritzker-pill" id="drawer-pritzker-pill" style="display: none;">🏆 프리츠커상</span>
+        </div>
         <h2 class="drawer-name-ko" id="drawer-name-ko">건축가 이름</h2>
         <div class="drawer-name-en" id="drawer-name-en">Architect Name</div>
       </div>
-      <button class="btn-icon" id="btn-close-drawer" title="닫기">
-        <i data-lucide="x"></i>
-      </button>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button class="btn-icon btn-drawer-star" id="btn-drawer-favorite" title="즐겨찾기 토글 (★)">
+          <i data-lucide="star"></i>
+        </button>
+        <button class="btn-icon" id="btn-close-drawer" title="닫기">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
     </div>
 
     <div class="drawer-body">
@@ -212,6 +256,31 @@
       <div class="drawer-section">
         <div class="architect-movement" id="drawer-movement" style="font-size: 0.95rem; margin-bottom: 8px;"></div>
         <div class="drawer-quote-box" id="drawer-quote-box"></div>
+      </div>
+
+      <!-- 프리츠커 공식 헌사 & 골드 메달 섹션 -->
+      <div class="drawer-pritzker-card" id="drawer-pritzker-box" style="display: none;">
+        <div class="pritzker-card-header">
+          <i data-lucide="award"></i>
+          <span id="drawer-pritzker-year-label">프리츠커 건축상 심사위원 헌사</span>
+        </div>
+        <p class="pritzker-citation-text" id="drawer-pritzker-citation"></p>
+        <div class="pritzker-honors-list" id="drawer-pritzker-honors"></div>
+      </div>
+
+      <!-- 지리 좌표 & 활동 도시 아틀라스 점프 바 -->
+      <div class="drawer-geo-box" id="drawer-geo-box">
+        <div class="geo-info-content">
+          <i data-lucide="map-pin" style="color: #ef4444;"></i>
+          <div>
+            <span class="geo-city-label" id="drawer-geo-city">파리, 프랑스</span>
+            <span class="geo-region-label" id="drawer-geo-region">(유럽 · 48.85°N, 2.35°E)</span>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-geo-jump" id="btn-jump-atlas-city" title="건축 세계지도에서 활동 무대 확인하기">
+          <i data-lucide="globe"></i>
+          <span>지도에서 보기</span>
+        </button>
       </div>
 
       <!-- 역사적 비화 & 학술 해설 박스 -->
@@ -248,6 +317,44 @@
           <span>주요 대표작 목록 & 위치</span>
         </div>
         <div id="drawer-keyworks-list" class="drawer-keyworks-list"></div>
+      </div>
+
+      <!-- 구축적 재료 & 구조 물성 (Tectonic Materials) -->
+      <div class="drawer-section" id="drawer-tectonics-section">
+        <div class="drawer-section-title">
+          <i data-lucide="hammer"></i>
+          <span>구축적 재료 & 고유 물성 (Tectonic Materials)</span>
+        </div>
+        <div class="tectonics-pills-wrap" id="drawer-tectonics-pills"></div>
+      </div>
+
+      <!-- 공간 구법 & 건축 문법 (Spatial Principles) -->
+      <div class="drawer-section" id="drawer-spatial-section">
+        <div class="drawer-section-title">
+          <i data-lucide="maximize-2"></i>
+          <span>공간 구법 & 설계 문법 (Spatial Syntax)</span>
+        </div>
+        <p class="drawer-desc" id="drawer-spatial-desc" style="font-size: 0.88rem; line-height: 1.6; color: var(--text-primary);"></p>
+      </div>
+
+      <!-- 주요 저서 & 매니페스토 (Major Publications) -->
+      <div class="drawer-section" id="drawer-books-section">
+        <div class="drawer-section-title">
+          <i data-lucide="book"></i>
+          <span>핵심 저서 & 건축 선언문 (Major Publications)</span>
+        </div>
+        <div class="drawer-books-list" id="drawer-books-list"></div>
+      </div>
+
+      <!-- 실현되지 않은 미래 비전 & 프로젝트 (Unbuilt Visionary Projects) -->
+      <div class="drawer-section" id="drawer-unbuilt-section">
+        <div class="drawer-section-title">
+          <i data-lucide="sparkles"></i>
+          <span>미완의 비전 프로젝트 (Unbuilt Vision)</span>
+        </div>
+        <div class="drawer-unbuilt-card" id="drawer-unbuilt-box">
+          <p id="drawer-unbuilt-text"></p>
+        </div>
       </div>
 
       <!-- 영향의 고리: 스승 / 사사 -->
@@ -497,17 +604,38 @@
           <span class="lb-meta" id="lightbox-meta"></span>
         </div>
         <div class="lb-controls">
-          <button class="btn-icon" id="btn-lb-zoom-out" title="축소"><i data-lucide="zoom-out"></i></button>
-          <span class="lb-zoom-level" id="lightbox-zoom-val">100%</span>
-          <button class="btn-icon" id="btn-lb-zoom-in" title="확대"><i data-lucide="zoom-in"></i></button>
-          <button class="btn-icon" id="btn-lb-reset" title="원래대로"><i data-lucide="rotate-ccw"></i></button>
-          <a class="btn-icon" id="lightbox-original-link" target="_blank" title="위키미디어 원본 파일 열기"><i data-lucide="external-link"></i></a>
-          <button class="btn-icon study-modal-close" title="닫기"><i data-lucide="x"></i></button>
+          <!-- Blueprint Pro Filter Pills -->
+          <div class="lb-filters-group">
+            <button class="lb-filter-btn active" data-filter="normal" title="표준 원본 뷰">표준 CAD</button>
+            <button class="lb-filter-btn" data-filter="cyan" title="전통 청사진 모드">청사진 (Cyan)</button>
+            <button class="lb-filter-btn" data-filter="mono" title="다크 테크니컬 모드">다크 모노</button>
+            <button class="lb-filter-btn" data-filter="sepia" title="양피지 빈티지 모드">세피아</button>
+            <button class="lb-filter-btn lb-split-toggle" id="btn-lb-split-toggle" title="도면 ↔ 실물 건축물 1:1 맞비교">
+              <i data-lucide="columns"></i>
+              <span>실물 분할 비교</span>
+            </button>
+          </div>
+
+          <div class="lb-zoom-actions">
+            <button class="btn-icon" id="btn-lb-zoom-out" title="축소"><i data-lucide="zoom-out"></i></button>
+            <span class="lb-zoom-level" id="lightbox-zoom-val">100%</span>
+            <button class="btn-icon" id="btn-lb-zoom-in" title="확대"><i data-lucide="zoom-in"></i></button>
+            <button class="btn-icon" id="btn-lb-reset" title="원래대로"><i data-lucide="rotate-ccw"></i></button>
+            <a class="btn-icon" id="lightbox-original-link" target="_blank" title="원본 파일 열기"><i data-lucide="external-link"></i></a>
+            <button class="btn-icon study-modal-close" title="닫기"><i data-lucide="x"></i></button>
+          </div>
         </div>
       </div>
       <div class="lightbox-body">
-        <div class="lightbox-canvas-area" id="lightbox-canvas-area">
-          <img id="lightbox-image" src="" alt="건축 도면">
+        <div class="lightbox-split-container">
+          <div class="lightbox-canvas-area" id="lightbox-canvas-area">
+            <div class="lb-canvas-tag">📐 건축 도면 / 설계 다이어그램</div>
+            <img id="lightbox-image" src="" alt="건축 도면">
+          </div>
+          <div class="lightbox-split-building-area" id="lightbox-split-building-area">
+            <div class="lb-canvas-tag">🏛️ 완공 실물 사진 (1:1 현장 대조)</div>
+            <img id="lightbox-split-building-img" src="" alt="실물 완공 건축물">
+          </div>
         </div>
         <div class="lightbox-explanation-bar">
           <i data-lucide="compass"></i>
@@ -600,13 +728,62 @@
     </div>
   </div>
 
+  <!-- ==========================================
+       MODAL 10: 건축 구조 & 공간 설계 원리 스튜디오
+       ========================================== -->
+  <div class="modal-overlay study-modal" id="modal-architectural-principles">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="study-badge">구조 & 공간 원리</span>
+          <h3 class="modal-title">📐 건축 구조 & 공간 설계 원리 스튜디오</h3>
+        </div>
+        <button class="btn-icon study-modal-close"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div id="architectural-principles-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL 11: 글로벌 커맨드 팔레트 & 통합 검색 (Ctrl + K)
+       ========================================== -->
+  <div class="modal-overlay spotlight-overlay" id="modal-command-palette">
+    <div class="spotlight-card">
+      <div class="spotlight-header">
+        <i data-lucide="search" class="spotlight-search-icon"></i>
+        <input type="text" id="spotlight-input" class="spotlight-input" placeholder="건축가, 사조, 대표작, 핵심 개념, 저서 검색... (↑↓ 이동, Enter 열기)" autocomplete="off">
+        <kbd class="spotlight-kbd">ESC</kbd>
+      </div>
+      <div class="spotlight-quick-filters">
+        <button class="spotlight-filter active" data-cat="all">전체</button>
+        <button class="spotlight-filter" data-cat="architect">건축가 (50인)</button>
+        <button class="spotlight-filter" data-cat="movement">사조·선언문</button>
+        <button class="spotlight-filter" data-cat="book">핵심 저서</button>
+        <button class="spotlight-filter" data-cat="action">바로가기</button>
+      </div>
+      <div class="spotlight-results" id="spotlight-results"></div>
+      <div class="spotlight-footer">
+        <div class="spotlight-hints">
+          <span><kbd>↑</kbd> <kbd>↓</kbd> 선택 이동</span>
+          <span><kbd>Enter</kbd> 상세 보기</span>
+          <span><kbd>ESC</kbd> 닫기</span>
+        </div>
+        <span class="spotlight-count" id="spotlight-count">50명의 거장 및 학술 지식 인덱싱됨</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Application Scripts (의존성 순서대로 명확히 로드) -->
-  <script src="js/data.js?v=20261106_1"></script>
-  <script src="js/graph.js?v=20261106_1"></script>
-  <script src="js/timeline.js?v=20261106_1"></script>
-  <script src="js/cards.js?v=20261106_1"></script>
-  <script src="js/gallery.js?v=20261106_1"></script>
-  <script src="js/study.js?v=20261106_1"></script>
-  <script src="js/app.js?v=20261106_1"></script>
+  <script src="js/data.js?v=20261106_2"></script>
+  <script src="js/graph.js?v=20261106_2"></script>
+  <script src="js/timeline.js?v=20261106_2"></script>
+  <script src="js/cards.js?v=20261106_2"></script>
+  <script src="js/gallery.js?v=20261106_2"></script>
+  <script src="js/atlas.js?v=20261106_2"></script>
+  <script src="js/flashcards.js?v=20261106_2"></script>
+  <script src="js/study.js?v=20261106_2"></script>
+  <script src="js/app.js?v=20261106_2"></script>
 </body>
 </html>

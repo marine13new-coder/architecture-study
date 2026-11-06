@@ -35,6 +35,15 @@ class ArchiStudy {
       idB: 'ludwig-mies'
     };
 
+    this.spotlightState = {
+      query: '',
+      category: 'all',
+      selectedIndex: 0,
+      results: []
+    };
+
+    this.activePrinciple = 'corbusier-5points';
+
     this.init();
   }
 
@@ -42,6 +51,7 @@ class ArchiStudy {
     this.setupButtons();
     this.setupModals();
     this.setupLightboxEvents();
+    this.setupSpotlightEvents();
   }
 
   updateData(architects) {
@@ -56,6 +66,14 @@ class ArchiStudy {
     // 2. 1:1 맞비교 분석기
     const btnCompare = document.getElementById('btn-open-comparator');
     if (btnCompare) btnCompare.addEventListener('click', () => this.openComparator());
+
+    // 2-1. 구조·원리 스튜디오
+    const btnPrinciples = document.getElementById('btn-open-principles');
+    if (btnPrinciples) btnPrinciples.addEventListener('click', () => this.openPrinciplesStudio());
+
+    // 2-2. 통합 검색 (Command Palette / Spotlight)
+    const btnSpotlight = document.getElementById('btn-open-spotlight');
+    if (btnSpotlight) btnSpotlight.addEventListener('click', () => this.openSpotlight());
 
     // 3. 사조 가이드
     const btnMovements = document.getElementById('btn-open-movements-guide');
@@ -857,9 +875,12 @@ class ArchiStudy {
     const modal = document.getElementById('modal-blueprint-lightbox');
     if (!modal) return;
 
+    this.lightboxState.architect = architect;
     this.lightboxState.zoom = 1;
     this.lightboxState.panX = 0;
     this.lightboxState.panY = 0;
+    this.lightboxState.filter = 'normal';
+    this.lightboxState.isSplit = false;
 
     const imgEl = document.getElementById('lightbox-image');
     const titleEl = document.getElementById('lightbox-title');
@@ -950,6 +971,41 @@ class ArchiStudy {
         canvas.style.cursor = 'grab';
       }
     });
+
+    // Blueprint Pro Filter Buttons (Normal, Cyan, Mono, Sepia)
+    modal.querySelectorAll('.lb-filter-btn:not(.lb-split-toggle)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.querySelectorAll('.lb-filter-btn:not(.lb-split-toggle)').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filterType = btn.getAttribute('data-filter') || 'normal';
+        this.lightboxState.filter = filterType;
+        canvas.setAttribute('data-filter', filterType);
+        img.className = 'lightbox-img filter-' + filterType;
+      });
+    });
+
+    // Split-Screen Toggle (도면 ↔ 실물 건축물 1:1 비교)
+    const btnSplit = document.getElementById('btn-lb-split-toggle');
+    const splitBuildingArea = document.getElementById('lightbox-split-building-area');
+    const splitImg = document.getElementById('lightbox-split-building-img');
+    const splitContainer = document.querySelector('.lightbox-body');
+
+    if (btnSplit) {
+      btnSplit.addEventListener('click', () => {
+        this.lightboxState.isSplit = !this.lightboxState.isSplit;
+        btnSplit.classList.toggle('active', this.lightboxState.isSplit);
+
+        if (splitContainer) {
+          splitContainer.classList.toggle('split-active', this.lightboxState.isSplit);
+        }
+
+        if (this.lightboxState.isSplit && this.lightboxState.architect && splitImg) {
+          splitImg.src = this.lightboxState.architect.buildingImg || this.lightboxState.architect.blueprintImg;
+          const label = document.getElementById('lightbox-split-building-title');
+          if (label) label.textContent = (this.lightboxState.architect.masterpiece || '').split(',')[0] + ' (실물 완공 사진)';
+        }
+      });
+    }
   }
 
   // ========================================================
@@ -1240,6 +1296,742 @@ class ArchiStudy {
     }
 
     modal.classList.add('open');
+  }
+
+
+  // ========================================================
+  // 8. 구조 & 공간 설계 원리 스튜디오 (Architectural Principles Studio)
+  // ========================================================
+  openPrinciplesStudio(principleId) {
+    this.closeAllModals();
+    const modal = document.getElementById('modal-architectural-principles');
+    if (!modal) return;
+
+    if (principleId) this.activePrinciple = principleId;
+    this.renderPrinciplesStudio();
+    modal.classList.add('open');
+  }
+
+  renderPrinciplesStudio() {
+    const container = document.getElementById('architectural-principles-container');
+    if (!container) return;
+
+    const principles = [
+      {
+        id: 'corbusier-5points',
+        title: '르 코르뷔지에: 근대 건축 5원칙',
+        sub: 'Les 5 points d\'une architecture nouvelle (1926)',
+        architectId: 'le-corbusier',
+        architectName: '르 코르뷔지에',
+        year: '1926',
+        building: '빌라 사보아 (Villa Savoye, 1929)',
+        slogan: '건축은 빛 아래에서 펼쳐지는 형태들의 능숙하고 정확하며 웅대한 유희이다.',
+        overview: '1926년 르 코르뷔지에가 《에스프리 누보》를 통해 정립한 현대 건축 공간의 5대 원리입니다. 철근 콘크리트 골조(돔-이노)를 통해 벽체의 하중 부담을 완전히 없애고 인간의 공간적 자유와 자연과의 조화를 극대화했습니다.',
+        points: [
+          {
+            num: '01',
+            title: '필로티 (Les pilotis)',
+            concept: '지상층의 해방 & 대지의 연속성',
+            desc: '철근 콘크리트 기둥으로 건물을 지상에서 들어 올려 대지를 보행자와 자연, 자동차의 연속적인 순환 통로로 개방합니다. 습기를 차단하고 대지의 점유를 최소화합니다.',
+            tag: '지상층 개방'
+          },
+          {
+            num: '02',
+            title: '옥상 정원 (Le toit-jardin)',
+            concept: '자연의 회복 & 슬래브 보호',
+            desc: '박공지붕 대신 평지붕을 도입하고 흙과 식물을 심어 건축물이 대지에서 빼앗은 녹지 면적을 100% 옥상에서 회복합니다. 콘크리트 슬래브의 열팽창 균열을 방지합니다.',
+            tag: '생태 녹화'
+          },
+          {
+            num: '03',
+            title: '자유로운 평면 (Le plan libre)',
+            concept: '내력벽의 소멸 & 가변적 공간',
+            desc: '하중을 외벽이 아닌 슬림한 독립 기둥(필로티)들이 지탱하므로 내부 칸막이벽을 어디든 자유롭게 배치하거나 없앨 수 있습니다. 공간의 무한한 유동성을 창출합니다.',
+            tag: '공간 유동성'
+          },
+          {
+            num: '04',
+            title: '가로로 긴 창 (La fenêtre en longueur)',
+            concept: '균등한 채광 & 파노라마 조망',
+            desc: '벽이 하중을 지지하지 않으므로 구조적 제약 없이 외벽의 전 길이에 걸쳐 수평 연속 창을 뚫을 수 있습니다. 실내 전체에 균일한 자연광을 들이고 외부 파노라마를 담습니다.',
+            tag: '수평 채광'
+          },
+          {
+            num: '05',
+            title: '자유로운 입면 (La façade libre)',
+            concept: '구조와 스킨의 분리',
+            desc: '기둥을 외벽선 안쪽으로 후퇴시켜 입면(Façade)이 순수한 외피이자 가벼운 차단막이 됩니다. 기둥의 간섭 없이 입면을 순수 조형 캔버스로 구성할 수 있습니다.',
+            tag: '순수 조형 외피'
+          }
+        ],
+        svgType: 'savoye'
+      },
+      {
+        id: 'dom-ino-system',
+        title: '돔-이노 시스템: 현대 골조의 기틀',
+        sub: 'Maison Dom-Ino Frame Revolution (1914)',
+        architectId: 'le-corbusier',
+        architectName: '르 코르뷔지에',
+        year: '1914',
+        building: '돔-이노 표준 가변 주택 골조',
+        slogan: 'Domus(집) + Innovatio(혁신) — 표준화된 슬래브와 기둥의 완벽한 융합',
+        overview: '제1차 세계대전으로 파괴된 플랑드르 도시들의 신속한 재건을 위해 1914년 고안된 조립식 철근 콘크리트 골조 시스템입니다. 3개의 슬래브, 6개의 얇은 기둥, 외팔보 계단만으로 건물의 모든 뼈대를 구성합니다.',
+        points: [
+          {
+            num: '01',
+            title: '3개 수평 슬래브 (Horizontal Slabs)',
+            concept: '지반 접지층 · 2층 바닥 · 옥상 슬래브',
+            desc: '균일한 두께의 철근 콘크리트 판 3개로 구조적 수평면을 완성하여, 바닥과 천장이 동시에 성립됩니다.',
+            tag: '표준 슬래브'
+          },
+          {
+            num: '02',
+            title: '6개 슬림 독립 기둥 (Reinforced Columns)',
+            concept: '벽체를 완전히 배제한 순수 점지지',
+            desc: '슬래브 모서리 안쪽에 배치된 6개의 철근 콘크리트 기둥만으로 모든 수직 하중을 지반에 전달합니다.',
+            tag: '순수 기둥 지지'
+          },
+          {
+            num: '03',
+            title: '독립 캔틸레버 계단 (Cantilevered Staircase)',
+            concept: '구조체 외부로 분리된 수직 동선',
+            desc: '내부 평면을 단 1%도 잠식하지 않도록 계단을 외팔보 형태로 외부에 독립 배치하여 실내 공간의 자유도를 100% 보존합니다.',
+            tag: '외팔보 동선'
+          },
+          {
+            num: '04',
+            title: '대량 생산 & 현장 가변성 (Pre-fabrication)',
+            concept: '모듈식 연장과 벽체 자율 시공',
+            desc: '골조만 완성되면 현장의 흙벽돌, 유리, 목재 등 어떤 재료로도 벽체를 채울 수 있어 전 세계 대량 주택 보급의 모태가 되었습니다.',
+            tag: '산업화 주거'
+          }
+        ],
+        svgType: 'domino'
+      },
+      {
+        id: 'mies-universal-space',
+        title: '미스 반 데어 로에: 유니버설 스페이스 & 코너 디테일',
+        sub: 'Universal Space & I-Beam Corner Tectonics',
+        architectId: 'ludwig-mies',
+        architectName: '루트비히 미스 반 데어 로에',
+        year: '1956',
+        building: 'IIT 크라운 홀 & 시그램 빌딩 (Seagram Building)',
+        slogan: '신은 디테일에 있다 (God is in the detail) · 적을수록 풍요롭다 (Less is more)',
+        overview: '내부 기둥을 완전히 없앤 거대한 단일 무주 공간(Universal Space)과 외피 커튼월의 시각적 명료성을 완성한 코너 I-형강 브론즈 멀리언 상세는 현대 초고층 및 공공 건축의 영원한 교과서입니다.',
+        points: [
+          {
+            num: '01',
+            title: '무주 만능 공간 (Column-free Universal Space)',
+            concept: '어떤 용도로든 즉시 전환 가능한 가변 공간',
+            desc: '주 구조 트러스나 거더를 건물 외부 상부로 노출시켜(크라운 홀), 67m x 36m 실내에 단 하나의 기둥도 두지 않는 궁극의 개방성을 달성했습니다.',
+            tag: '무주 공간'
+          },
+          {
+            num: '02',
+            title: '스킨 앤 본 구조 (Skin and Bone)',
+            concept: '강철 뼈대와 유리 스킨의 순수 결합',
+            desc: '장식을 철저히 배제하고 구조체(Bone)와 유리 외피(Skin)의 투명한 비례만으로 건축적 숭고함을 이끌어냅니다.',
+            tag: '구조의 순수성'
+          },
+          {
+            num: '03',
+            title: 'I-형강 코너 멀리언 디테일 (Corner Detail)',
+            concept: '소방법 피복을 극복한 예술적 진실성',
+            desc: '콘크리트로 내화 피복된 주 기둥 바깥에 비구조용 브론즈 I-형강을 용접하여, 건물 모퉁이에서 구조적 힘의 흐름을 시각적으로 솔직하게 증명했습니다.',
+            tag: '구조적 명료성'
+          },
+          {
+            num: '04',
+            title: '플로팅 포디움 (Raised Podium)',
+            concept: '대지에서 살짝 떠오른 신전적 숭고함',
+            desc: '판스워스 하우스와 베를린 신국립미술관처럼 화강암 포디움을 두어 자연 대지와 인공 건축물 사이에 정밀한 영적 긴장감을 부여합니다.',
+            tag: '현대적 신전'
+          }
+        ],
+        svgType: 'mies'
+      },
+      {
+        id: 'wright-cantilever',
+        title: '프랭크 로이드 라이트: 캔틸레버 밸런스 & 상자의 파괴',
+        sub: 'Organic Cantilever Mechanics & Destruction of the Box',
+        architectId: 'frank-lloyd-wright',
+        architectName: '프랭크 로이드 라이트',
+        year: '1935',
+        building: '낙수재 (Fallingwater, 1935)',
+        slogan: '건축은 대지 위에 서 있는 것이 아니라 대지로부터 솟아나와야 한다.',
+        overview: '모퉁이 벽을 깨부수고 내부와 외부 자연이 끊김 없이 교감하게 만든 "상자의 파괴"와 거대한 철근 콘크리트 트레이를 허공에 띄워 폭포와 하나가 되게 한 유기적 캔틸레버 역학의 정점입니다.',
+        points: [
+          {
+            num: '01',
+            title: '역T형 캔틸레버 트레이 (Cantilever Trays)',
+            concept: '폭포 위 허공으로 돌출된 테라스',
+            desc: '자연 암반에 중심 코어 앵커를 박고, 2.5m 이상 허공으로 뻗은 철근 콘크리트 역T형 빔을 통해 중력의 모멘트 균형을 이뤄냈습니다.',
+            tag: '모멘트 균형'
+          },
+          {
+            num: '02',
+            title: '상자의 파괴 (Destruction of the Box)',
+            concept: '모퉁이 기둥 제거와 연속 유리 코너',
+            desc: '방을 밀폐하던 전통 4개 벽면의 모퉁이를 철거하고 유리 맞댐 창을 끼워, 내부 시선이 숲의 수평선으로 막힘없이 방사되게 만들었습니다.',
+            tag: '유기적 연속성'
+          },
+          {
+            num: '03',
+            title: '중심 벽난로 핵 (Central Hearth Anchor)',
+            concept: '모든 수평 공간의 구심점이 되는 석재 코어',
+            desc: '현장 베어런 계곡의 암석을 쌓아올린 거대한 벽난로를 건물의 심장으로 삼아 거센 캔틸레버의 인장력을 묵직하게 붙잡아 줍니다.',
+            tag: '대지의 닻'
+          },
+          {
+            num: '04',
+            title: '재료의 정직성과 통합 (Material Honesty)',
+            concept: '거친 자연석과 매끄러운 콘크리트의 대화',
+            desc: '주변 바위와 똑같은 석회암을 수평 줄눈으로 쌓고, 난간은 살구색 페인트의 부드러운 콘크리트로 마감하여 자연의 유기적 연장선으로 완성했습니다.',
+            tag: '유기적 물성'
+          }
+        ],
+        svgType: 'wright'
+      }
+    ];
+
+    const current = principles.find(p => p.id === this.activePrinciple) || principles[0];
+
+    container.innerHTML = `
+      <div class="principles-studio">
+        <!-- Top Switcher Tabs -->
+        <div class="principle-tabs-nav">
+          ${principles.map(p => `
+            <button class="principle-tab-btn ${p.id === current.id ? 'active' : ''}" data-id="${p.id}">
+              <div class="ptab-title">${p.title.split(':')[0]}</div>
+              <div class="ptab-sub">${p.architectName} (${p.year})</div>
+            </button>
+          `).join('')}
+        </div>
+
+        <!-- Principle Content Grid -->
+        <div class="principles-content-grid">
+          <!-- Left: Interactive Schematic & Mechanics Visualizer -->
+          <div class="principle-visual-col">
+            <div class="principle-visual-card">
+              <div class="pvis-header">
+                <div>
+                  <span class="pvis-badge">📐 인터랙티브 구조 도해</span>
+                  <h4 class="pvis-title">${current.building}</h4>
+                </div>
+                <button class="btn btn-primary btn-sm jump-arch-btn" data-id="${current.architectId}">
+                  <span>${current.architectName} 도감 보기 →</span>
+                </button>
+              </div>
+
+              <!-- Interactive Diagram Stage -->
+              <div class="pvis-canvas-stage">
+                ${this.renderPrincipleSvg(current.svgType)}
+              </div>
+
+              <div class="pvis-caption">
+                <i data-lucide="info"></i>
+                <span>${current.slogan}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Deep Principles & Step-by-Step Breakdown -->
+          <div class="principle-info-col">
+            <div class="principle-info-header">
+              <span class="study-badge">공간 구법 & 역학 분석</span>
+              <h3 class="principle-main-title">${current.title}</h3>
+              <div class="principle-main-sub">${current.sub}</div>
+              <p class="principle-overview-text">${current.overview}</p>
+            </div>
+
+            <!-- Points Accordion / Cards List -->
+            <div class="principle-points-list">
+              ${current.points.map((pt, idx) => `
+                <div class="principle-point-card" data-idx="${idx}">
+                  <div class="ppoint-top">
+                    <span class="ppoint-num">${pt.num}</span>
+                    <div style="flex: 1;">
+                      <h4 class="ppoint-title">${pt.title}</h4>
+                      <div class="ppoint-concept">${pt.concept}</div>
+                    </div>
+                    <span class="ppoint-tag">${pt.tag}</span>
+                  </div>
+                  <p class="ppoint-desc">${pt.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Bind Tab click
+    container.querySelectorAll('.principle-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.activePrinciple = btn.getAttribute('data-id');
+        this.renderPrinciplesStudio();
+      });
+    });
+
+    // Jump to architect
+    container.querySelectorAll('.jump-arch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const archId = btn.getAttribute('data-id');
+        const arch = this.architects.find(a => a.id === archId);
+        if (arch) {
+          const modal = document.getElementById('modal-architectural-principles');
+          if (modal) modal.classList.remove('open');
+          this.app.openDetailDrawer(arch);
+        }
+      });
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  renderPrincipleSvg(type) {
+    if (type === 'savoye') {
+      return `
+        <svg viewBox="0 0 540 320" class="principle-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="savoyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.05"/>
+            </linearGradient>
+            <linearGradient id="groundGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#059669" stop-opacity="0.05"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Ground Line -->
+          <line x1="20" y1="270" x2="520" y2="270" stroke="#475569" stroke-width="2" stroke-dasharray="4 4" />
+          <text x="30" y="290" fill="#64748b" font-size="11" font-family="monospace">대지 지표선 (Continuous Ground Level)</text>
+
+          <!-- Ground Circulation Arrow -->
+          <path d="M 40 250 Q 270 230 500 250" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="6 4" />
+          <text x="210" y="245" fill="#10b981" font-size="11" font-weight="bold">① 지상 연속 순환 (Piloti Free Ground)</text>
+
+          <!-- Piloti Columns (Point 1) -->
+          <g stroke="#38bdf8" stroke-width="4">
+            <line x1="100" y1="180" x2="100" y2="270" />
+            <line x1="180" y1="180" x2="180" y2="270" />
+            <line x1="270" y1="180" x2="270" y2="270" />
+            <line x1="360" y1="180" x2="360" y2="270" />
+            <line x1="440" y1="180" x2="440" y2="270" />
+          </g>
+          <text x="235" y="215" fill="#38bdf8" font-size="12" font-weight="bold">필로티 열주 (Pilotis)</text>
+
+          <!-- Free Façade & Box (Point 5) -->
+          <rect x="70" y="100" width="400" height="80" rx="4" fill="url(#savoyeGrad)" stroke="#38bdf8" stroke-width="2" />
+          <text x="80" y="120" fill="#94a3b8" font-size="11">⑤ 자유로운 입면 (Free Façade)</text>
+
+          <!-- Ribbon Window (Point 4) -->
+          <rect x="80" y="130" width="380" height="22" rx="2" fill="#0f172a" stroke="#00f2fe" stroke-width="2" />
+          <g stroke="#00f2fe" stroke-width="1" stroke-dasharray="3 3">
+            <line x1="140" y1="130" x2="140" y2="152" />
+            <line x1="200" y1="130" x2="200" y2="152" />
+            <line x1="260" y1="130" x2="260" y2="152" />
+            <line x1="320" y1="130" x2="320" y2="152" />
+            <line x1="380" y1="130" x2="380" y2="152" />
+            <line x1="420" y1="130" x2="420" y2="152" />
+          </g>
+          <text x="210" y="146" fill="#00f2fe" font-size="11" font-weight="bold">④ 가로로 긴 창 (Ribbon Window)</text>
+
+          <!-- Roof Garden (Point 2) -->
+          <path d="M 140 100 Q 200 60 280 60 Q 340 60 400 100 Z" fill="url(#groundGrad)" stroke="#10b981" stroke-width="2" />
+          <circle cx="210" cy="75" r="7" fill="#10b981" />
+          <circle cx="230" cy="80" r="5" fill="#10b981" />
+          <circle cx="310" cy="78" r="8" fill="#10b981" />
+          <text x="210" y="45" fill="#34d399" font-size="12" font-weight="bold">② 옥상 정원 (Roof Garden Solarium)</text>
+
+          <!-- Interior Ramp (Point 3: Free Plan) -->
+          <path d="M 180 270 L 300 180 L 360 100" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="4 3" />
+          <text x="310" y="170" fill="#fbbf24" font-size="11" font-weight="bold">③ 자유로운 내부 램프 (Free Plan Promenade)</text>
+        </svg>
+      `;
+    } else if (type === 'domino') {
+      return `
+        <svg viewBox="0 0 540 320" class="principle-svg" xmlns="http://www.w3.org/2000/svg">
+          <!-- Isometric Dom-Ino Slabs -->
+          <defs>
+            <linearGradient id="slabGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#475569" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#1e293b" stop-opacity="0.9"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Level 1 Base Slab -->
+          <polygon points="120,230 420,200 480,240 180,270" fill="url(#slabGrad)" stroke="#60a5fa" stroke-width="2"/>
+          <text x="140" y="260" fill="#93c5fd" font-size="10" font-weight="bold">1층 기초 슬래브</text>
+
+          <!-- Columns Level 1 to 2 -->
+          <g stroke="#38bdf8" stroke-width="5">
+            <line x1="160" y1="240" x2="160" y2="170"/>
+            <line x1="280" y1="225" x2="280" y2="155"/>
+            <line x1="420" y1="210" x2="420" y2="140"/>
+            <line x1="200" y1="260" x2="200" y2="190"/>
+            <line x1="330" y1="245" x2="330" y2="175"/>
+            <line x1="460" y1="230" x2="460" y2="160"/>
+          </g>
+
+          <!-- Level 2 Middle Slab -->
+          <polygon points="120,160 420,130 480,170 180,200" fill="url(#slabGrad)" stroke="#60a5fa" stroke-width="2"/>
+          <text x="140" y="190" fill="#93c5fd" font-size="10" font-weight="bold">2층 바닥 슬래브</text>
+
+          <!-- Columns Level 2 to 3 -->
+          <g stroke="#38bdf8" stroke-width="5">
+            <line x1="160" y1="170" x2="160" y2="100"/>
+            <line x1="280" y1="155" x2="280" y2="85"/>
+            <line x1="420" y1="140" x2="420" y2="70"/>
+            <line x1="200" y1="190" x2="200" y2="120"/>
+            <line x1="330" y1="175" x2="330" y2="105"/>
+            <line x1="460" y1="160" x2="460" y2="90"/>
+          </g>
+
+          <!-- Level 3 Roof Slab -->
+          <polygon points="120,90 420,60 480,100 180,130" fill="url(#slabGrad)" stroke="#60a5fa" stroke-width="2"/>
+          <text x="140" y="120" fill="#93c5fd" font-size="10" font-weight="bold">옥상 평 슬래브</text>
+
+          <!-- External Staircase -->
+          <path d="M 90 260 L 110 230 L 100 200 L 120 160 L 110 130 L 130 90" fill="none" stroke="#f59e0b" stroke-width="3"/>
+          <text x="30" y="175" fill="#fbbf24" font-size="11" font-weight="bold">외부 캔틸레버 계단 →</text>
+          
+          <text x="210" y="30" fill="#38bdf8" font-size="13" font-weight="bold">Maison Dom-Ino Frame (1914)</text>
+          <text x="160" y="305" fill="#94a3b8" font-size="11">내력벽 완전 소멸 : 3 Slabs + 6 Slim Columns + 1 Cantilever Stair</text>
+        </svg>
+      `;
+    } else if (type === 'mies') {
+      return `
+        <svg viewBox="0 0 540 320" class="principle-svg" xmlns="http://www.w3.org/2000/svg">
+          <!-- Universal Space Crown Hall Elevation/Section -->
+          <rect x="50" y="240" width="440" height="20" fill="#334155" stroke="#64748b" stroke-width="2"/>
+          <text x="200" y="255" fill="#cbd5e1" font-size="11" font-weight="bold">기단 포디움 (Floating Podium)</text>
+
+          <!-- 4 External Overhead Plate Girders -->
+          <line x1="110" y1="80" x2="110" y2="240" stroke="#f59e0b" stroke-width="6"/>
+          <line x1="210" y1="80" x2="210" y2="240" stroke="#f59e0b" stroke-width="6"/>
+          <line x1="330" y1="80" x2="330" y2="240" stroke="#f59e0b" stroke-width="6"/>
+          <line x1="430" y1="80" x2="430" y2="240" stroke="#f59e0b" stroke-width="6"/>
+
+          <!-- Suspended Roof Truss -->
+          <rect x="70" y="100" width="400" height="24" fill="#1e293b" stroke="#f59e0b" stroke-width="3"/>
+          <text x="170" y="116" fill="#fbbf24" font-size="11" font-weight="bold">외부 상부 노출 거더 (Overhead Girders)</text>
+
+          <!-- Interior Column-Free Space -->
+          <rect x="75" y="124" width="390" height="116" fill="rgba(56, 189, 248, 0.08)" stroke="#38bdf8" stroke-width="1.5"/>
+          <text x="165" y="180" fill="#38bdf8" font-size="14" font-weight="bold">유니버설 스페이스 (무주 공간)</text>
+          <text x="180" y="200" fill="#94a3b8" font-size="11">내부 기둥 0개 (100% 가변 공간)</text>
+
+          <!-- Corner I-Beam Mullion Detail Inset Box -->
+          <rect x="360" y="15" width="160" height="75" rx="4" fill="#0f172a" stroke="#cbd5e1" stroke-width="1.5"/>
+          <text x="370" y="32" fill="#fbbf24" font-size="10" font-weight="bold">시그램 빌딩 코너 상세</text>
+          <path d="M 380 50 L 395 50 L 395 70 L 380 70 M 387 50 L 387 70" stroke="#f59e0b" stroke-width="2" fill="none"/>
+          <text x="405" y="55" fill="#94a3b8" font-size="9">비구조 I-형강</text>
+          <text x="405" y="68" fill="#cbd5e1" font-size="9">브론즈 멀리언</text>
+        </svg>
+      `;
+    } else {
+      // Wright Fallingwater Cantilever
+      return `
+        <svg viewBox="0 0 540 320" class="principle-svg" xmlns="http://www.w3.org/2000/svg">
+          <!-- Central Rock Hearth Anchor -->
+          <rect x="80" y="60" width="100" height="220" fill="#475569" stroke="#64748b" stroke-width="2"/>
+          <text x="90" y="130" fill="#f8fafc" font-size="12" font-weight="bold">중심 석재 코어</text>
+          <text x="95" y="150" fill="#cbd5e1" font-size="11">(벽난로 닻)</text>
+
+          <!-- Natural Rock Foundation -->
+          <path d="M 40 280 Q 150 260 220 280 L 220 310 L 40 310 Z" fill="#334155"/>
+          <text x="60" y="300" fill="#94a3b8" font-size="11">베어런 계곡 자연 암반</text>
+
+          <!-- Falling Waterfall -->
+          <g stroke="#38bdf8" stroke-width="3" stroke-dasharray="8 6" opacity="0.8">
+            <line x1="240" y1="240" x2="240" y2="310"/>
+            <line x1="260" y1="240" x2="260" y2="310"/>
+            <line x1="280" y1="240" x2="280" y2="310"/>
+          </g>
+          <text x="245" y="290" fill="#38bdf8" font-size="11" font-weight="bold">폭포 (Fallingwater)</text>
+
+          <!-- Cantilever Tray 1 (Middle Terrace) -->
+          <rect x="130" y="170" width="260" height="18" rx="3" fill="#e2e8f0" stroke="#f59e0b" stroke-width="2"/>
+          <text x="210" y="184" fill="#0f172a" font-size="11" font-weight="bold">2.5m 철근 콘크리트 캔틸레버 테라스</text>
+
+          <!-- Cantilever Tray 2 (Upper Terrace) -->
+          <rect x="130" y="110" width="200" height="16" rx="3" fill="#e2e8f0" stroke="#f59e0b" stroke-width="2"/>
+          <text x="180" y="123" fill="#0f172a" font-size="10" font-weight="bold">상부 돌출 테라스</text>
+
+          <!-- Destruction of Box Glass Corner -->
+          <path d="M 320 126 L 320 170" stroke="#00f2fe" stroke-width="3" stroke-dasharray="4 2"/>
+          <text x="330" y="150" fill="#00f2fe" font-size="11" font-weight="bold">상자의 파괴 (코너 유리창)</text>
+
+          <!-- Mechanics Force Arrows -->
+          <line x1="130" y1="165" x2="130" y2="135" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="70" y="195" fill="#ef4444" font-size="10" font-weight="bold">지렛대 반력</text>
+          <line x1="380" y1="188" x2="380" y2="218" stroke="#3b82f6" stroke-width="3"/>
+          <text x="360" y="235" fill="#3b82f6" font-size="10" font-weight="bold">캔틸레버 모멘트 (허공 돌출)</text>
+        </svg>
+      `;
+    }
+  }
+
+  // ========================================================
+  // 9. 통합 검색 & 글로벌 커맨드 팔레트 (Ctrl+K Spotlight Search)
+  // ========================================================
+  setupSpotlightEvents() {
+    // Keyboard shortcut Ctrl+K or Cmd+K
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        this.openSpotlight();
+      }
+    });
+
+    const modal = document.getElementById('modal-command-palette');
+    if (!modal) return;
+
+    const input = document.getElementById('spotlight-input');
+    if (input) {
+      input.addEventListener('input', (e) => {
+        this.spotlightState.query = e.target.value.trim().toLowerCase();
+        this.spotlightState.selectedIndex = 0;
+        this.renderSpotlightResults();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        const results = this.spotlightState.results || [];
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          this.spotlightState.selectedIndex = (this.spotlightState.selectedIndex + 1) % Math.max(1, results.length);
+          this.updateSpotlightSelection();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          this.spotlightState.selectedIndex = (this.spotlightState.selectedIndex - 1 + results.length) % Math.max(1, results.length);
+          this.updateSpotlightSelection();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (results.length > 0) {
+            this.executeSpotlightItem(results[this.spotlightState.selectedIndex]);
+          }
+        }
+      });
+    }
+
+    // Category filters
+    modal.querySelectorAll('.spotlight-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal.querySelectorAll('.spotlight-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.spotlightState.category = btn.getAttribute('data-cat') || 'all';
+        this.spotlightState.selectedIndex = 0;
+        this.renderSpotlightResults();
+      });
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) this.closeSpotlight();
+    });
+  }
+
+  openSpotlight() {
+    this.closeAllModals();
+    const modal = document.getElementById('modal-command-palette');
+    if (!modal) return;
+
+    this.spotlightState.query = '';
+    this.spotlightState.selectedIndex = 0;
+    const input = document.getElementById('spotlight-input');
+    if (input) {
+      input.value = '';
+      setTimeout(() => input.focus(), 80);
+    }
+
+    this.renderSpotlightResults();
+    modal.classList.add('open');
+  }
+
+  closeSpotlight() {
+    const modal = document.getElementById('modal-command-palette');
+    if (modal) modal.classList.remove('open');
+  }
+
+  buildSpotlightIndex() {
+    const items = [];
+
+    // 1. Architects
+    this.architects.forEach(arch => {
+      items.push({
+        type: 'architect',
+        category: 'architect',
+        id: arch.id,
+        title: `${arch.nameKo} (${arch.nameEn})`,
+        subtitle: `${arch.movement} · ${arch.country} (${arch.birth}–${arch.death || '현재'})`,
+        extra: arch.masterpiece ? `대표작: ${arch.masterpiece.split(',')[0]}` : '',
+        badge: arch.pritzker ? '🏆 프리츠커' : '건축가',
+        data: arch
+      });
+
+      // 2. Books
+      if (arch.majorBooks && Array.isArray(arch.majorBooks)) {
+        arch.majorBooks.forEach(b => {
+          items.push({
+            type: 'book',
+            category: 'book',
+            id: arch.id,
+            title: `${b.title} (${b.year}년)`,
+            subtitle: `저자: ${arch.nameKo} · ${b.desc || ''}`,
+            extra: arch.movement,
+            badge: '📚 핵심 저서',
+            data: arch
+          });
+        });
+      }
+    });
+
+    // 3. Movements
+    const movements = [
+      { name: '시카고 학파 (Chicago School)', year: '1880s–1910s', lead: '루이스 설리번', desc: '철골조와 엘리베이터로 현대 마천루의 탄생' },
+      { name: '바우하우스 (Bauhaus)', year: '1919–1933', lead: '발터 그로피우스', desc: '예술과 기술의 통합, 커튼월과 산업 디자인' },
+      { name: '국제주의 양식 (International Style)', year: '1920s–1960s', lead: '르 코르뷔지에, 미스', desc: '기능주의와 장식의 배제, 기둥-슬래브 골조' },
+      { name: '유기적 건축 (Organic Architecture)', year: '1900s–1950s', lead: '프랭크 로이드 라이트', desc: '대지와의 일체화, 상자의 파괴, 연속 공간' },
+      { name: '브루탈리즘 (Brutalism)', year: '1950s–1970s', lead: '르 코르뷔지에, 칸', desc: '노출 콘크리트(Béton Brut)의 원초적 질감과 육중한 매스' },
+      { name: '포스트모더니즘 (Postmodernism)', year: '1960s–1980s', lead: '로버트 벤투리, 존슨', desc: 'Less is a bore. 역사적 은유와 다의성, 장식의 부활' },
+      { name: '해체주의 (Deconstructivism)', year: '1980s–2000s', lead: '자하 하디드, 게리, 콜하스', desc: '직교 좌표계의 해체, 비선형 유동성 기하학' },
+      { name: '하이테크 건축 (High-Tech)', year: '1970s–현재', lead: '노먼 포스터, 피아노, 로저스', desc: '첨단 구조 설비의 외부 노출, 생태적 지속가능성' }
+    ];
+
+    movements.forEach(m => {
+      items.push({
+        type: 'movement',
+        category: 'movement',
+        title: m.name,
+        subtitle: `${m.year} · 대표: ${m.lead}`,
+        extra: m.desc,
+        badge: '🏛️ 사조',
+        data: m
+      });
+    });
+
+    // 4. Quick Actions
+    items.push({
+      type: 'action',
+      category: 'action',
+      title: '건축 세계지도 아틀라스 (World Architecture Atlas)',
+      subtitle: '전 세계 50인 거장의 랜드마크를 대륙·도시별로 탐색합니다.',
+      extra: 'D3 지리 좌표 투영 뷰',
+      badge: '⚡ 바로가기',
+      action: () => this.app.switchView('atlas')
+    });
+
+    items.push({
+      type: 'action',
+      category: 'action',
+      title: '3D 암기 플래시카드 스튜디오 (SRS Spaced Repetition)',
+      subtitle: '건축사 시험 대비 3D 플립 플래시카드로 건축가와 도면을 암기합니다.',
+      extra: 'Space 뒤집기, 1/2/3 등급 평가',
+      badge: '⚡ 바로가기',
+      action: () => this.app.switchView('flashcards')
+    });
+
+    items.push({
+      type: 'action',
+      category: 'action',
+      title: '구조·원리 스튜디오 (Architectural Principles Studio)',
+      subtitle: '근대 5원칙, 돔이노, 유니버설 스페이스, 캔틸레버 인터랙티브 도해',
+      extra: '인터랙티브 SVG 다이어그램',
+      badge: '⚡ 바로가기',
+      action: () => this.openPrinciplesStudio()
+    });
+
+    return items;
+  }
+
+  renderSpotlightResults() {
+    const container = document.getElementById('spotlight-results');
+    const countEl = document.getElementById('spotlight-count');
+    if (!container) return;
+
+    const allItems = this.buildSpotlightIndex();
+    const q = this.spotlightState.query;
+    const cat = this.spotlightState.category;
+
+    let filtered = allItems.filter(item => {
+      if (cat !== 'all' && item.category !== cat) return false;
+      if (!q) return true;
+      return (
+        item.title.toLowerCase().includes(q) ||
+        (item.subtitle && item.subtitle.toLowerCase().includes(q)) ||
+        (item.extra && item.extra.toLowerCase().includes(q))
+      );
+    });
+
+    this.spotlightState.results = filtered;
+    if (countEl) countEl.textContent = `${filtered.length}개의 일치하는 결과`;
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="spotlight-empty">
+          <i data-lucide="search-x"></i>
+          <div>"${q}"에 대한 검색 결과가 없습니다.</div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">건축가 이름, 저서, 사조명(바우하우스, 해체주의 등)으로 검색해 보세요.</span>
+        </div>
+      `;
+      if (window.lucide) window.lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = filtered.map((item, idx) => {
+      const isSelected = idx === this.spotlightState.selectedIndex;
+      return `
+        <div class="spotlight-item ${isSelected ? 'active' : ''}" data-idx="${idx}">
+          <div class="spotlight-item-icon">
+            ${item.type === 'architect' ? '👤' : item.type === 'book' ? '📚' : item.type === 'movement' ? '🏛️' : '⚡'}
+          </div>
+          <div class="spotlight-item-content">
+            <div class="spotlight-item-title-row">
+              <span class="spotlight-item-title">${item.title}</span>
+              <span class="spotlight-item-badge">${item.badge}</span>
+            </div>
+            <div class="spotlight-item-sub">${item.subtitle}</div>
+            ${item.extra ? `<div class="spotlight-item-extra">${item.extra}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Click handler
+    container.querySelectorAll('.spotlight-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.getAttribute('data-idx'), 10);
+        this.executeSpotlightItem(filtered[idx]);
+      });
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  updateSpotlightSelection() {
+    const container = document.getElementById('spotlight-results');
+    if (!container) return;
+    const items = container.querySelectorAll('.spotlight-item');
+    items.forEach((item, idx) => {
+      item.classList.toggle('active', idx === this.spotlightState.selectedIndex);
+      if (idx === this.spotlightState.selectedIndex) {
+        item.scrollIntoView({ block: 'nearest' });
+      }
+    });
+  }
+
+  executeSpotlightItem(item) {
+    if (!item) return;
+    this.closeSpotlight();
+
+    if (item.action) {
+      item.action();
+    } else if (item.type === 'architect' || item.type === 'book') {
+      this.app.openDetailDrawer(item.data);
+    } else if (item.type === 'movement') {
+      this.openMovementsGuide();
+    }
   }
 
   generateStudyMarkdown() {

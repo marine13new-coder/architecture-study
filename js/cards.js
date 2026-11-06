@@ -12,6 +12,8 @@ class ArchiCards {
     this.activeEraId = null;
     this.searchQuery = "";
     this.sortBy = "birth-asc";
+    this.onlyFavorites = false;
+    this.onlyPritzker = false;
   }
 
   setData(architects, edges, eras) {
@@ -31,6 +33,12 @@ class ArchiCards {
     this.render();
   }
 
+  setExtraFilters(onlyFav, onlyPritzker) {
+    this.onlyFavorites = !!onlyFav;
+    this.onlyPritzker = !!onlyPritzker;
+    this.render();
+  }
+
   setSortBy(sortKey) {
     this.sortBy = sortKey;
     this.render();
@@ -44,6 +52,12 @@ class ArchiCards {
 
     let list = this.architects.filter(a => {
       if (this.activeEraId && this.activeEraId !== "all" && a.eraId !== this.activeEraId) {
+        return false;
+      }
+      if (this.onlyFavorites && !a.isFavorite) {
+        return false;
+      }
+      if (this.onlyPritzker && !a.pritzker) {
         return false;
       }
       if (this.searchQuery) {
@@ -126,6 +140,8 @@ class ArchiCards {
                       </span>
                     ` : ''}
                     
+                    ${arch.pritzker ? `<span class="card-pritzker-tag">🏆 ${arch.pritzker.year} 프리츠커</span>` : ""}
+                    <button class="card-star-btn ${arch.isFavorite ? "active" : ""}" data-id="${arch.id}" title="즐겨찾기">★</button>
                     <span class="card-era-tag" style="background: rgba(13, 17, 23, 0.85); color: ${era.color}; border: 1px solid ${era.color};">
                       ${era.name}
                     </span>
@@ -186,6 +202,17 @@ class ArchiCards {
         const arch = this.architects.find(a => a.id === id);
         if (arch) {
           this.onSelectArchitect(arch);
+        }
+      });
+    });
+
+    const starBtns = this.container.querySelectorAll(".card-star-btn");
+    starBtns.forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute("data-id");
+        if (window.app && window.app.toggleFavorite) {
+          window.app.toggleFavorite(id);
         }
       });
     });
